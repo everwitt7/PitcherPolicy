@@ -1,5 +1,6 @@
 """file used to run the program"""
 from zones import Zones, ObviousZones, Zone
+from error_dist import NormalErrorDistribution
 
 
 # These constants are all based on the diagram of our general strike zone
@@ -119,6 +120,16 @@ ball_14_inputs = {
     }
 }
 
+norm_err_dist_params = {
+    "FF": [0.18, 0.24],
+    "SL": [0.23, 0.39],
+    "FT": [0.24, 0.26],
+    "CH": [0.15, 0.25],
+    "CU": [0.21, 0.48],
+    "FC": [0.21, 0.34],
+    "SI": [0.24, 0.28]
+}
+
 
 if __name__ == "__main__":
     strike_zones = list()
@@ -141,4 +152,10 @@ if __name__ == "__main__":
 
     obvious_zones = ObviousZones(LEFT_X, BOT_Y)
     myzones = Zones(strike_zones, ball_zones, obvious_zones)
-    myzones.display_zones()
+    # myzones.display_zones()
+
+    normal_error_dists = list()
+    for name, sigma in norm_err_dist_params.items():
+        normal_error_dists.append(NormalErrorDistribution(sigma[0], sigma[1]))
+
+    print(normal_error_dists)
