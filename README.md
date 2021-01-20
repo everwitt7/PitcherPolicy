@@ -1,1 +1,3 @@
 # Pitch-Prediction
+
+how to set up your own local venv...

@@ -46,6 +46,8 @@ class Pitch:
         self.zones = zones
         self.error_dist = error_dist
 
+    # TODO: move dispaly_zones() from Zones to Pitch
+
     def __repr__(self):
         """Displays the inputs used to instantiate the object"""
         return f"Pitch({repr(self.name)}, {repr(self.zones)}, {repr(self.error_dist)})"
