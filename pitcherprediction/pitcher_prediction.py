@@ -2,6 +2,7 @@
 from zones import Zones, ObviousZones, Zone
 from error_dist import NormalErrorDistribution
 
+# TODO: clean up this garbage code - move constants into config.py file
 
 # These constants are all based on the diagram of our general strike zone
 # we would want zone_coords_config.json file or something

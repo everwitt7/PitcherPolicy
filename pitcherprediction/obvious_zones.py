@@ -74,6 +74,7 @@ class ObviousZones:
         str
             the name of the obvious zone or -1
         """
+        # TODO: create an enum for each obvious zone type?
         if x_coord < self.left_x and y_coord > self.top_y:
             return "9b"
         if self.left_x < x_coord < self.right_x and y_coord > self.top_y:
