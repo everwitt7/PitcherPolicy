@@ -176,7 +176,7 @@ class Zones:
                          zone.name)
 
         # plotting rectangles for obvious zones
-        for zone_name, zone_data in self.obvious_zones.getobvious_zones_diagram_data().items():
+        for zone_name, zone_data in self.obvious_zones.get_obvious_zones_diagram_data().items():
             rect = plt.Rectangle(zone_data["coords"],
                                  width=zone_data["width"],
                                  height=zone_data["height"],
