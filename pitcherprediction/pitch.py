@@ -9,12 +9,12 @@ from error_dist import ErrorDistribution
 @unique
 class PitchTypes(Enum):
     """Enum for each pitch type we allow the pitcher to throw"""
-    FOUR_SEEM = 1
-    TWO_SEEM = 2
-    SLIDER = 3
-    CHANGEUP = 4
-    CURVE = 5
-    CUTTER = 6
+    FOUR_SEEM = "Four-Seam"
+    TWO_SEEM = "Two-Seam"
+    SLIDER = "Slider"
+    CHANGEUP = "Changeup"
+    CURVE = "Curveball"
+    CUTTER = "Cutter"
 
 
 class Pitch:

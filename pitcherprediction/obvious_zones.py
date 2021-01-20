@@ -1,5 +1,21 @@
 """ObviousZones Module"""
 
+from enum import Enum, unique
+
+
+@unique
+class ObviousZoneNames(Enum):
+    """Enum for each pitch type we allow the pitcher to throw"""
+    NINE = "9b"
+    TEN = "10b"
+    ELEVEN = "11b"
+    TWELVE = "12b"
+    THIRTEEN = "13b"
+    FOURTEEN = "14b"
+    FIFTEEN = "15b"
+    SIXTEEN = "16b"
+    ERROR = "-1"
+
 
 class ObviousZones:
     """Class used to represent ObviousZones
@@ -74,27 +90,26 @@ class ObviousZones:
         str
             the name of the obvious zone or -1
         """
-        # TODO: create an enum for each obvious zone type?
         if x_coord < self.left_x and y_coord > self.top_y:
-            return "9b"
+            return ObviousZoneNames.NINE.value
         if self.left_x < x_coord < self.right_x and y_coord > self.top_y:
-            return "10b"
+            return ObviousZoneNames.TEN.value
         if x_coord > self.right_x and y_coord > self.top_y:
-            return "11b"
+            return ObviousZoneNames.ELEVEN.value
 
         if x_coord < self.left_x and self.bot_y < y_coord < self.top_y:
-            return "12b"
+            return ObviousZoneNames.TWELVE.value
         if x_coord > self.right_x and self.bot_y < y_coord < self.top_y:
-            return "13b"
+            return ObviousZoneNames.THIRTEEN.value
 
         if x_coord < self.left_x and y_coord < self.bot_y:
-            return "14b"
+            return ObviousZoneNames.FOURTEEN.value
         if self.left_x < x_coord < self.right_x and y_coord < self.bot_y:
-            return "15b"
+            return ObviousZoneNames.FIFTEEN.value
         if x_coord > self.right_x and y_coord < self.bot_y:
-            return "16b"
+            return ObviousZoneNames.SIXTEEN.value
 
-        return "-1"
+        return ObviousZoneNames.ERROR.value
 
     def get_obvious_zones_diagram_data(self) -> dict:
         """Returns the information that defines obvious zones
