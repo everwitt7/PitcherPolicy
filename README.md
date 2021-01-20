@@ -1,6 +1,6 @@
 # Pitch-Prediction
 
-# Local Setup
+## Local Setup
 
 1. Clone Repository: `https://github.com/everwitt7/Pitch-Prediction.git`
 2. Create a Virtual Enviornment: `python -m venv venv`
