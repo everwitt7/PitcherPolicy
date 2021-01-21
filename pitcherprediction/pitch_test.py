@@ -10,11 +10,16 @@ class TestPitchClass(unittest.TestCase):
     """Test Pitch class"""
 
     def setUp(self):
-        self.zones = Pitch(PitchNames.FOUR_SEEM.value,
+        self.pitch = Pitch(PitchNames.FOUR_SEEM.value,
                            TEST_ZONES, TEST_ERR_DIST)
 
     def test_run_error_simuation(self):
-        """Test ObviousZone.in_strike_zone(trials) function"""
+        """Test ObviousZone.in_strike_zone function"""
+        acc_mat = self.pitch.run_error_simuation()
+        for _, err in acc_mat.items():
+            tot = sum([e for _, e in err.items()])
+            self.assertAlmostEqual(1, tot, places=3)
 
 
-# TODO: make sure accuracy matrix sums to 1 - is that it?
+if __name__ == '__main__':
+    unittest.main()
