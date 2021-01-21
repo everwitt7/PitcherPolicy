@@ -1,23 +1,11 @@
 """Pitch Module"""
 
-from enum import Enum, unique
 
 import matplotlib.pyplot as plt
 
 from error_dist import ErrorDistribution
 from zones import Zones
-from obvious_zones import ObviousZoneNames
-
-
-@unique
-class PitchTypes(Enum):
-    """Enum for each pitch type we allow the pitcher to throw"""
-    FOUR_SEEM = "Four-Seam"
-    TWO_SEEM = "Two-Seam"
-    SLIDER = "Slider"
-    CHANGEUP = "Changeup"
-    CURVE = "Curveball"
-    CUTTER = "Cutter"
+from pitch_zone_enums import ObviousZoneNames
 
 
 class Pitch:
@@ -38,7 +26,7 @@ class Pitch:
         plots a visual of our zones
     """
 
-    def __init__(self, name: str, zones: Zones, error_dist: ErrorDistribution):
+    def __init__(self, name: str, zones: Zones, error_dist: ErrorDistribution) -> None:
         """Instantiates Pitch object
 
         Parameters
@@ -54,10 +42,10 @@ class Pitch:
         self.zones = zones
         self.error_dist = error_dist
 
-    def display_zones(self):
+    def display_zones(self) -> None:
         """Displays an image and name for each Zone in the Zones object"""
         _, axis = plt.subplots(figsize=(8, 10))
-        plt.title("Zones from Umpire Perspective")
+        plt.title(f"{self.name} Zones from Umpire Perspective")
 
         # plotting rectangles for strike zones
         for zone in self.zones.strike_zones:

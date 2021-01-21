@@ -1,20 +1,5 @@
 """ObviousZones Module"""
-
-from enum import Enum, unique
-
-
-@unique
-class ObviousZoneNames(Enum):
-    """Enum for each pitch type we allow the pitcher to throw"""
-    NINE = "9b"
-    TEN = "10b"
-    ELEVEN = "11b"
-    TWELVE = "12b"
-    THIRTEEN = "13b"
-    FOURTEEN = "14b"
-    FIFTEEN = "15b"
-    SIXTEEN = "16b"
-    ERROR = "-1"
+from pitch_zone_enums import ObviousZoneNames
 
 
 class ObviousZones:
