@@ -4,8 +4,8 @@
 import matplotlib.pyplot as plt
 
 from error_dist import ErrorDistribution
-from zones import Zones
 from pitch_zone_enums import ObviousZoneNames
+from zones import Zones
 
 
 class Pitch:
@@ -54,7 +54,7 @@ class Pitch:
         Returns
         -------
         dict
-            a dict of all zones which has a dict for % of time the pitch ended in the intended zone
+            a dict of all zones which has a dict for % of time the pitch ended in a zone
         """
         acc_matrix = {}
         for zone in self.zones.strike_zones + self.zones.ball_zones:

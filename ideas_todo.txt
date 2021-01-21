@@ -1,0 +1,4 @@
+If you think of a feature that would be useful in the future add it here:
+
+- print heat map of zones: a green circle indidcating intended location and then zones are 
+different shades of red (would be an easy visual sanity check like display_zones

@@ -17,9 +17,9 @@ class Zone:
 
     Methods
     -------
-    get_center(x_coord, y_coord)
+    get_center()
         returns an (x,y) tuple of the center of the Zone
-    in_zone()
+    in_zone(x_coord, y_coord)
         returns true if (x_coord, y_coord) are in the Zone
     """
 

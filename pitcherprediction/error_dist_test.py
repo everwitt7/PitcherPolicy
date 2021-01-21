@@ -12,7 +12,7 @@ class TestNormalErrorDistributionClass(unittest.TestCase):
         self.norm_err_dist = NormalErrorDistribution(1, 1)
 
     def test_gen_actual_loc(self):
-        """Test NormalErrorDistribution.gen_actual_loc()"""
+        """Test NormalErrorDistribution.gen_actual_loc"""
         x_intended, y_intended = 2, -3
         x_actual, y_actual = self.norm_err_dist.gen_actual_loc(
             x_intended, y_intended)
