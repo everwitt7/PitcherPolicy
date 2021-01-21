@@ -166,6 +166,7 @@ class Zones:
                                  zorder=2)
             axis.add_patch(rect)
             # plotting text for each zone
+            # TODO: replace strings with enumerations
             if zone.name == "10a" or zone.name == "15a":
                 plt.text(zone.coords[0] + zone.width/2.2,
                          zone.coords[1] + zone.height/2,

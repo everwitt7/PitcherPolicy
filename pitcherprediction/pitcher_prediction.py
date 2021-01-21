@@ -155,10 +155,8 @@ if __name__ == "__main__":
 
     obvious_zones = ObviousZones(LEFT_X, BOT_Y)
     myzones = Zones(strike_zones, ball_zones, obvious_zones)
-    # myzones.display_zones()
+    myzones.display_zones()
 
     normal_error_dists = list()
     for name, sigma in norm_err_dist_params.items():
         normal_error_dists.append(NormalErrorDistribution(sigma[0], sigma[1]))
-
-    print(normal_error_dists)
