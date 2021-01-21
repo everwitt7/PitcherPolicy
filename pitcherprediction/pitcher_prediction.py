@@ -164,4 +164,11 @@ if __name__ == "__main__":
         normal_error_dists.append(NormalErrorDistribution(sigma[0], sigma[1]))
 
     ff = Pitch(PitchNames.FOUR_SEEM.value, myzones, normal_error_dists[0])
-    ff.display_zones()
+
+    # for some debugging purposes - takes very little time to run
+    ff_acc_mat = ff.run_error_simuation(1000)
+    for zone, acc in ff_acc_mat.items():
+        print(f"\"{zone.name}\":")
+        print(f"{acc},")
+
+    # ff.display_zones()

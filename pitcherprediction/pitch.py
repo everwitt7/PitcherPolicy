@@ -24,6 +24,8 @@ class Pitch:
     -------
     display_zones()
         plots a visual of our zones
+    run_error_simuation(trials)
+        generates an accuracy matrix
     """
 
     def __init__(self, name: str, zones: Zones, error_dist: ErrorDistribution) -> None:
@@ -41,6 +43,35 @@ class Pitch:
         self.name = name
         self.zones = zones
         self.error_dist = error_dist
+
+    def run_error_simuation(self, trials: int = 1000) -> dict:
+        """Runs a simulation to create an accuracy matrix based on zones and error dist
+
+        Parameters
+        ----------
+        trials : int
+            the number of times we run the simulation for each zone
+        Returns
+        -------
+        dict
+            a dict of all zones which has a dict for % of time the pitch ended in the intended zone
+        """
+        acc_matrix = {}
+        for zone in self.zones.strike_zones + self.zones.ball_zones:
+            acc_matrix[zone] = {}
+            x_intended, y_intended = zone.get_center()
+
+            for _ in range(trials):
+                x_actual, y_actual = self.error_dist.gen_actual_loc(
+                    x_intended, y_intended)
+                loc = self.zones.return_zone(x_actual, y_actual)
+
+                if loc not in acc_matrix[zone].keys():
+                    acc_matrix[zone][loc] = 0
+                acc_matrix[zone][loc] += 1
+            acc_matrix[zone] = {k: v / trials for k,
+                                v in acc_matrix[zone].items()}
+        return acc_matrix
 
     def display_zones(self) -> None:
         """Displays an image and name for each Zone in the Zones object"""
