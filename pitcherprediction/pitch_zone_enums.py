@@ -4,7 +4,7 @@ from enum import Enum, unique
 
 @unique
 class StrikeZoneNames(Enum):
-    """Enum for each pitch type we allow the pitcher to throw"""
+    """Enum for each strike zone"""
     ZERO = "0a"
     ONE = "1a"
     TWO = "2a"
@@ -19,7 +19,7 @@ class StrikeZoneNames(Enum):
 
 @unique
 class BallZoneNames(Enum):
-    """Enum for each pitch type we allow the pitcher to throw"""
+    """Enum for each ball zone"""
     NINE = "9a"
     TEN = "10a"
     ELEVEN = "11a"
@@ -33,7 +33,7 @@ class BallZoneNames(Enum):
 
 @unique
 class ObviousZoneNames(Enum):
-    """Enum for each pitch type we allow the pitcher to throw"""
+    """Enum for each obvious zone"""
     NINE = "9b"
     TEN = "10b"
     ELEVEN = "11b"

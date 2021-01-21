@@ -1,11 +1,13 @@
 """file used to run the program"""
-from zones import Zones, ObviousZones, Zone
 from error_dist import NormalErrorDistribution
-from pitch import PitchTypes, Pitch
+from pitch import Pitch
+from pitch_zone_enums import PitchNames
+from zones import ObviousZones, Zone, Zones
 
 # TODO: clean up this garbage code - move constants into config.py file
-# TODO: put raw data into a raw-data folder, create a cleaned-data folder
-# TODO: create a helper fucntions module -adding
+# TODO: write pitch test class
+# TODO: pseudo code for all csv cleaning functions
+# TODO: psuedo code for all helper functions
 
 # These constants are all based on the diagram of our general strike zone
 # we would want zone_coords_config.json file or something
@@ -161,5 +163,5 @@ if __name__ == "__main__":
     for name, sigma in norm_err_dist_params.items():
         normal_error_dists.append(NormalErrorDistribution(sigma[0], sigma[1]))
 
-    ff = Pitch(PitchTypes.FOUR_SEEM.value, myzones, normal_error_dists[0])
+    ff = Pitch(PitchNames.FOUR_SEEM.value, myzones, normal_error_dists[0])
     ff.display_zones()
