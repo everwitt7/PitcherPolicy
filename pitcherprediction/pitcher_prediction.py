@@ -5,12 +5,17 @@ from pitch_zone_enums import PitchNames
 from zones import ObviousZones, Zone, Zones
 
 # TODO: clean up this garbage code - move constants into config.py file
-# TODO: write pitch test class
+# TODO: create a config to create Zones for each Pitch
+
 # TODO: pseudo code for all csv cleaning functions
 # TODO: psuedo code for all helper functions
 
 # These constants are all based on the diagram of our general strike zone
 # we would want zone_coords_config.json file or something
+
+
+# Arbitrary Zone Definitions - For Assertion Testing -
+# ORDER SHOULD BE WIDTH THEN HEIGHT (we do (x,y) for coordinates, so stay consistent x before y)
 LEFT_X = -0.831
 MID_LEFT_X = -0.277
 MID_RIGHT_X = 0.277
@@ -21,8 +26,6 @@ MID_TOP_Y = 0.358
 MID_BOT_Y = -0.358
 BOT_Y = -1.074
 
-# Arbitrary Zone Definitions - For Assertion Testing -
-# ORDER SHOULD BE WIDTH THEN HEIGHT (we do (x,y) for coordinates, so stay consistent x before y)
 STRIKE_HEIGHT = TOP_Y - MID_TOP_Y
 STRIKE_WIDTH = RIGHT_X - MID_RIGHT_X
 
@@ -171,4 +174,4 @@ if __name__ == "__main__":
         print(f"\"{zone.name}\":")
         print(f"{acc},")
 
-    # ff.display_zones()
+    ff.display_zones()
