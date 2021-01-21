@@ -37,7 +37,7 @@ class ObviousZones:
         returns true if (x_coord, y_coord) are outside left_x, right_x, top_y, and bot_y
     return_zone(x_coord, y_coord)
         returns the -1 if (x_coord, y_coord) in strike zone, otherwise returns the obvious zone name
-    get_obvious_zones_diagram_data()
+    get_obv_zones_data()
         returns a dict of obvious zone data needed to plot a Zones visualization
     """
 
@@ -111,7 +111,7 @@ class ObviousZones:
 
         return ObviousZoneNames.ERROR.value
 
-    def get_obvious_zones_diagram_data(self) -> dict:
+    def get_obv_zones_data(self) -> dict:
         """Returns the information that defines obvious zones
 
         Returns
