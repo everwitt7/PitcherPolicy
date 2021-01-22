@@ -2,3 +2,8 @@ If you think of a feature that would be useful in the future add it here:
 
 - print heat map of zones: a green circle indidcating intended location and then zones are 
 different shades of red (would be an easy visual sanity check like display_zones
+
+- condition AccuracyMatrix on State interface. We want the flexibility later to be able to take 
+into account things like Stadium or other variables that we might not think important but the MLB
+does, so being able to add that var to State and then have AccuracyMatrix compute itself for each
+state is the way to make this scalable 
