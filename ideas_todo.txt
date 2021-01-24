@@ -2,6 +2,7 @@ If you think of a feature that would be useful in the future add it here:
 
 - print heat map of zones: a green circle indidcating intended location and then zones are 
 different shades of red (would be an easy visual sanity check like display_zones
+    - Everett will implement this once helper functions and data cleaning functions are done
 
 - condition AccuracyMatrix on State interface. We want the flexibility later to be able to take 
 into account things like Stadium or other variables that we might not think important but the MLB

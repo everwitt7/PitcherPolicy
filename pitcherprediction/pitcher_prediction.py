@@ -171,10 +171,12 @@ if __name__ == "__main__":
 
     ff = Pitch(PitchNames.FOUR_SEEM.value, myzones, normal_error_dists[0])
 
-    # for some debugging purposes - takes very little time to run
-    ff_acc_mat = ff.run_error_simuation(1000)
-    for zone, acc in ff_acc_mat.items():
-        print(f"\"{zone.name}\":")
-        print(f"{acc},")
+    print(help(normal_error_dists[0]))
 
-    ff.display_zones()
+    # for some debugging purposes - takes very little time to run
+    # ff_acc_mat = ff.run_error_simuation(1000)
+    # for zone, acc in ff_acc_mat.items():
+    #     print(f"\"{zone.name}\":")
+    #     print(f"{acc},")
+
+    # ff.display_zones()
