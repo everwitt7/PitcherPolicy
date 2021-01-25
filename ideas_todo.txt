@@ -8,3 +8,12 @@ different shades of red (would be an easy visual sanity check like display_zones
 into account things like Stadium or other variables that we might not think important but the MLB
 does, so being able to add that var to State and then have AccuracyMatrix compute itself for each
 state is the way to make this scalable 
+
+- make our transitions (which is currently a dict with pitch name as key and values as list) a
+data frame. In fact calculating the transition functions should just be a lambda function that we apply
+to our cleaned data frame. the dictionary is {col:[vals for each row],etc...}
+
+- group emprical data as a data frame using df.groupby(pitchName). We want to partition by both state
+and pitch type
+
+- create our own list of videos and train and object detection model that tracks the ball and catcher glove
