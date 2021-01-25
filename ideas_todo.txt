@@ -14,6 +14,6 @@ data frame. In fact calculating the transition functions should just be a lambda
 to our cleaned data frame. the dictionary is {col:[vals for each row],etc...}
 
 - group emprical data as a data frame using df.groupby(pitchName). We want to partition by both state
-and pitch type
+and pitch type 
 
 - create our own list of videos and train and object detection model that tracks the ball and catcher glove
