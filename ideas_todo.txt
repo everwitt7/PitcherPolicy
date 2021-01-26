@@ -7,7 +7,12 @@ different shades of red (would be an easy visual sanity check like display_zones
 - condition AccuracyMatrix on State interface. We want the flexibility later to be able to take 
 into account things like Stadium or other variables that we might not think important but the MLB
 does, so being able to add that var to State and then have AccuracyMatrix compute itself for each
-state is the way to make this scalable 
+state is the way to make this scalable. From Mia: I don't think anything we'd condition the AccuracyMatrix 
+on is actually related to state. Things like Stadium are not state variables they're global variables 
+of the game because they remain constant throughout--> i.e. things that affect how we FIRST partition the data. 
+Things we might add to state are runners on base, score, etc, and those are way less likely to have an impact 
+on AccuracyMatrix. Like I said I also don't think we should hypothesize TOO much about what we MIGHT be asked to 
+do. By nature of being OOP it'll be easy to refractor and update as we go.
 
 - make our transitions (which is currently a dict with pitch name as key and values as list) a
 data frame. In fact calculating the transition functions should just be a lambda function that we apply
