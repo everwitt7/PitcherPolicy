@@ -7,4 +7,9 @@ Pitching:
 
 Hitting:
 
+Obvious Zones:
+- We create our Obvious Zone Cutoffs based on Righty and Lefty Batters. It might make more sense to partition 
+the data set, then create our obvious zones, because righty and lefty batters may have different swing
+tendencies and therefore have different obvious zones. 
+
 Other:
