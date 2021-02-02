@@ -7,3 +7,6 @@
 2. Source It: `source venv/bin/activate`
 3. Install requirements: `pip install -r requirements.txt`
 4. Run `pitcher_prediction.py`
+
+## Run Tests
+1. python all_test.py
