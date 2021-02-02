@@ -153,7 +153,7 @@ def generate_pitches() -> List[Pitch]:
     List[Pitch]
         a list of all our Pitch objects
     """
-    pitches = list()
+    pitches = {}
 
     # these remain the same for all pitches
     o_zones = ObviousZones(LEFT_X, BOT_Y)
@@ -215,6 +215,6 @@ def generate_pitches() -> List[Pitch]:
                     b_zones.append(Zone(z_name, coords, width, height))
 
         zones = Zones(s_zones, b_zones, o_zones)
-        pitches.append(Pitch(p_name, zones, norm_err_dist[p_name]))
+        pitches[p_name] = Pitch(p_name, zones, norm_err_dist[p_name])
 
     return pitches

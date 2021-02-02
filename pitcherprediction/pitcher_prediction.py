@@ -14,4 +14,4 @@ from pitch_zone_config import generate_pitches
 
 if __name__ == "__main__":
     pitches = generate_pitches()
-    pitches[4].display_zones()
+    pitches['FF'].display_zones()
