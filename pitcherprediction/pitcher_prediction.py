@@ -169,7 +169,7 @@ if __name__ == "__main__":
     for name, sigma in norm_err_dist_params.items():
         normal_error_dists.append(NormalErrorDistribution(sigma[0], sigma[1]))
 
-    ff = Pitch(PitchNames.FOUR_SEEM.value, myzones, normal_error_dists[0])
+    ff = Pitch(PitchNames.FOUR_SEAM.value, myzones, normal_error_dists[0])
 
     print(help(normal_error_dists[0]))
 
