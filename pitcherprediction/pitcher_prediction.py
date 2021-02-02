@@ -11,5 +11,8 @@ from pitch_zone_config import create_pitches
 # TODO: psuedo code for all helper functions
 
 if __name__ == "__main__":
-    ff = create_pitches()
+    pitches = create_pitches()
+
+    ff = pitches[0]
+    # TODO: displayzones looks weird - make a legend or something/rethink display
     ff.display_zones()
