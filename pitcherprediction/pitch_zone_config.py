@@ -146,8 +146,12 @@ norm_err_dist = {
 
 
 def generate_pitches() -> List[Pitch]:
-    """Add docstring
+    """Instantiates all of our Pitch objects (by instantiating zone, obvious_zones, and zones)
 
+    Returns
+    -------
+    List[Pitch]
+        a list of all our Pitch objects
     """
     pitches = list()
 
