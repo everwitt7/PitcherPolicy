@@ -9,4 +9,4 @@
 4. Run `pitcher_prediction.py`
 
 ## Run Tests
-1. python all_test.py
+`python -m unittest -v all_test.py`
