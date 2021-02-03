@@ -73,7 +73,7 @@ s_zone_inputs = {
 
 # TODO: all cutoffs currently taken from old values - need to validate then update
 cutoffs = {
-    PitchNames.FOUR_SEEM.value: {
+    PitchNames.FOUR_SEAM.value: {
         BallZoneNames.NINE.value: (-1.2, 1.4),
         BallZoneNames.TEN.value: (None, 1.5),
         BallZoneNames.ELEVEN.value: (None, None),
@@ -83,7 +83,7 @@ cutoffs = {
         BallZoneNames.FIFTEEN.value: (None, -1.25),
         BallZoneNames.SIXTEEN.value: (None, None)
     },
-    PitchNames.TWO_SEEM.value: {
+    PitchNames.TWO_SEAM.value: {
         BallZoneNames.NINE.value: (-1.3, 1.4),
         BallZoneNames.TEN.value: (None, 1.2),
         BallZoneNames.ELEVEN.value: (None, None),
@@ -136,8 +136,8 @@ cutoffs = {
 }
 
 norm_err_dist = {
-    PitchNames.FOUR_SEEM.value: NormalErrorDistribution(0.18, 0.24),
-    PitchNames.TWO_SEEM.value: NormalErrorDistribution(0.24, 0.26),
+    PitchNames.FOUR_SEAM.value: NormalErrorDistribution(0.18, 0.24),
+    PitchNames.TWO_SEAM.value: NormalErrorDistribution(0.24, 0.26),
     PitchNames.CUTTER.value: NormalErrorDistribution(0.21, 0.34),
     PitchNames.SLIDER.value: NormalErrorDistribution(0.23, 0.39),
     PitchNames.CURVE.value: NormalErrorDistribution(0.21, 0.48),
