@@ -71,7 +71,6 @@ s_zone_inputs = {
     }
 }
 
-# TODO: all cutoffs currently taken from old values - need to validate then update
 cutoffs = {
     PitchNames.FOUR_SEAM.value: {
         BallZoneNames.NINE.value: (-1.2, 1.4),
