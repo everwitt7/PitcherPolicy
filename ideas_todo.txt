@@ -23,7 +23,11 @@ and pitch type
 
 - create our own list of videos and train and object detection model that tracks the ball and catcher glove
 
-
+- change the metric we minimize from OBP to runs, where we need to iterate through game data to figure out
+the result of each at bat and understand how it updated the state. This means pulling at-bat data by game
+filtering the at-bats by each inning (top and bottom), mapping what pitch led to what state (either count
+changed, or something happened if the ball was in play). How would we treat stolen bases in this scenario?
+How would we treat wild pitches? How would we treat hit by pitch?
 
 
 Getting On-Base Information for 2019

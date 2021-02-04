@@ -54,7 +54,7 @@ class Pitch:
         Returns
         -------
         dict
-            a dict of all zones which has a dict for % of time the pitch ended in a zone
+            a dict[int][act] that has % of time the pitch ended in a zone
         """
         acc_matrix = {}
         for zone in self.zones.strike_zones + self.zones.ball_zones:
