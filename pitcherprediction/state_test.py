@@ -18,9 +18,8 @@ class TestCountStateClass(unittest.TestCase):
         intended_successors = [CountState(1,0), CountState(0,1)]
         actual_successors = self.count_state.get_successors()
 
-        
 
-        self.assertTrue(itended_successors == actual_successors)
+        self.assertCountEqual(intended_successors, actual_successors)
    
 
 
