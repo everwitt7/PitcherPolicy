@@ -58,7 +58,7 @@ class Pitch:
         """
         acc_matrix = {}
         for zone in self.zones.strike_zones + self.zones.ball_zones:
-            acc_matrix[zone] = {}
+            acc_matrix[zone.name] = {}
             x_intended, y_intended = zone.get_center()
 
             for _ in range(trials):
@@ -66,11 +66,11 @@ class Pitch:
                     x_intended, y_intended)
                 loc = self.zones.return_zone(x_actual, y_actual)
 
-                if loc not in acc_matrix[zone].keys():
-                    acc_matrix[zone][loc] = 0
-                acc_matrix[zone][loc] += 1
-            acc_matrix[zone] = {k: v / trials for k,
-                                v in acc_matrix[zone].items()}
+                if loc not in acc_matrix[zone.name].keys():
+                    acc_matrix[zone.name][loc] = 0
+                acc_matrix[zone.name][loc] += 1
+            acc_matrix[zone.name] = {k: v / trials for k,
+                                     v in acc_matrix[zone.name].items()}
         return acc_matrix
 
     def display_zones(self) -> None:
