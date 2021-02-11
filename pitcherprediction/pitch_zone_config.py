@@ -1,5 +1,6 @@
 """Module that defines our Pitch classes"""
 from typing import List
+from pathlib import Path
 
 from zone import Zone
 from zones import Zones
@@ -7,6 +8,10 @@ from obvious_zones import ObviousZones
 from pitch import Pitch
 from pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames
 from error_dist import NormalErrorDistribution
+
+# defining the absolute path to our swing_trans matrix
+REL_PATH = '../data-cleaning/combining-data/swing_transitions.json'
+SWING_TRANS_PATH = Path(__file__).parent / REL_PATH
 
 # defining strike and obvious zone dimensions
 LEFT_X = -0.831
@@ -217,3 +222,30 @@ def generate_pitches() -> List[Pitch]:
         pitches[p_name] = Pitch(p_name, zones, norm_err_dist[p_name])
 
     return pitches
+
+
+def gen_acc_mat(pitches) -> dict:
+    """Generates accuracy matrix by running error simulation for each pitch"""
+    acc_mat = {}
+    for p_name, pitch in pitches.items():
+        acc_mat[p_name] = pitch.run_error_simuation()
+    return acc_mat
+
+# should this be a class?
+
+
+def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
+    """Generates tansition probability matrix"""
+    trans_prob_mat = {}
+    for pitch in acc_mat:
+        trans_prob_mat[pitch] = {}
+
+        for int_zone in acc_mat[pitch]:
+            trans_prob_mat[pitch][int_zone] = {'swing': {}, 'take': 0}
+
+            for act_zone, pct in acc_mat[pitch][int_zone].items():
+                if act_zone in list(map(str, StrikeZoneNames)):
+                    trans_prob_mat[pitch][int_zone]['take'] += pct
+                trans_prob_mat[pitch][int_zone]['swing'] += pct * \
+                    swing_trans_mat[pitch][act_zone]
+    return trans_prob_mat
