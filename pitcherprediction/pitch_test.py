@@ -10,7 +10,7 @@ class TestPitchClass(unittest.TestCase):
     """Test Pitch class"""
 
     def setUp(self):
-        self.pitch = Pitch(PitchNames.FOUR_SEEM.value,
+        self.pitch = Pitch(PitchNames.FOUR_SEAM.value,
                            TEST_ZONES, TEST_ERR_DIST)
 
     def test_run_error_simuation(self):

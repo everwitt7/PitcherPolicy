@@ -22,3 +22,26 @@ to our cleaned data frame. the dictionary is {col:[vals for each row],etc...}
 and pitch type 
 
 - create our own list of videos and train and object detection model that tracks the ball and catcher glove
+
+- change the metric we minimize from OBP to runs, where we need to iterate through game data to figure out
+the result of each at bat and understand how it updated the state. This means pulling at-bat data by game
+filtering the at-bats by each inning (top and bottom), mapping what pitch led to what state (either count
+changed, or something happened if the ball was in play). How would we treat stolen bases in this scenario?
+How would we treat wild pitches? How would we treat hit by pitch?
+
+
+Getting On-Base Information for 2019
+- if we want to expand the game to outs and runners on base, then we should figure out how to get the 
+2019 runner on base data and integrate that into our data set. We can try to scrape BaseBall savant
+
+test by making sure the distribution is similar in 2019 to the previous years
+
+what is the url, what is the gid?
+Sample URL:
+https://baseballsavant.mlb.com/gamefeed?game_pk=631032&game_date=2020-9-15
+we should have game_data information, but we need game park information
+which we might be able to get from online for 2019?
+
+In which case we can feed:
+https://baseballsavant.mlb.com/gamefeed?game_pk=XXX&game_date=YYY
+where we dynamically feed XXX and YYY based on information we have

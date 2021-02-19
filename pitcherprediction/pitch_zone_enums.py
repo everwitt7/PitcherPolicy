@@ -48,9 +48,9 @@ class ObviousZoneNames(Enum):
 @unique
 class PitchNames(Enum):
     """Enum for each pitch type we allow the pitcher to throw"""
-    FOUR_SEEM = "Four-Seam"
-    TWO_SEEM = "Two-Seam"
-    SLIDER = "Slider"
-    CHANGEUP = "Changeup"
-    CURVE = "Curveball"
-    CUTTER = "Cutter"
+    FOUR_SEAM = "FF"
+    TWO_SEAM = "FT"
+    SLIDER = "SL"
+    CHANGEUP = "CH"
+    CURVE = "CU"
+    CUTTER = "FC"
