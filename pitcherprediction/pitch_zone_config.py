@@ -239,32 +239,41 @@ def gen_acc_mat(pitches) -> dict:
 #
 def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
     """Generates tansition probability matrix"""
-    trans_prob_mat = {'swing': {}, 'take': {}}
+    trans_prob_mat = {}
 
     for pitch, zones in swing_trans_mat.items():
-        trans_prob_mat['swing'][pitch] = {}
-        trans_prob_mat['take'][pitch] = {}
+        trans_prob_mat[pitch] = {}
 
         for int_zone in zones:
-            trans_prob_mat['take'][pitch][int_zone] = 0
-            trans_prob_mat['swing'][pitch][int_zone] = {
-                'foul': 0, 'out': 0, 'strike': 0, 'hit': 0, 'ball': 0
+            trans_prob_mat[pitch][int_zone] = {
+                'take': {
+                    'strike': 0, 'ball': 0
+                },
+                'swing': {
+                    'foul': 0, 'out': 0, 'strike': 0, 'hit': 0, 'ball': 0
+                }
             }
+
+            if int_zone[-1] == 'b':
+                trans_prob_mat[pitch][int_zone]['take']['ball'] = 1
+
             # pitches for which we ran an error simulation
             if int_zone in acc_mat[pitch]:
 
-                # sometimes a zone in the strike zone does not exist...
+                # TODO: do not use a fixed strike zone list...
                 for s_zone in ['0a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a']:
                     if s_zone in acc_mat[pitch][int_zone]:
-                        trans_prob_mat['take'][pitch][int_zone] += acc_mat[pitch][int_zone][s_zone]
+                        trans_prob_mat[pitch][int_zone]['take']['strike'] += acc_mat[pitch][int_zone][s_zone]
+                trans_prob_mat[pitch][int_zone]['take']['ball'] = 1 - \
+                    trans_prob_mat[pitch][int_zone]['take']['strike']
 
                 for act_zone, prob_in_zone in acc_mat[pitch][int_zone].items():
 
                     for outcome, prob_outcome in swing_trans_mat[pitch][act_zone].items():
 
-                        trans_prob_mat['swing'][pitch][int_zone][outcome] += prob_in_zone * prob_outcome
+                        trans_prob_mat[pitch][int_zone]['swing'][outcome] += prob_in_zone * prob_outcome
             else:
-                trans_prob_mat['swing'][pitch][int_zone] = swing_trans_mat[pitch][int_zone]
+                trans_prob_mat[pitch][int_zone]['swing'] = swing_trans_mat[pitch][int_zone]
     return trans_prob_mat
 
 # TODO: refactor to class - write test that confirms transition probabilities sum to 1
