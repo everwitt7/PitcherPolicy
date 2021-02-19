@@ -1,5 +1,4 @@
-Just putting a list of assumptions here that we can add to as we write code and then clean this up later:
-(if you remember past assumptions unrelated to the code just toss then in here)
+List of Assumptions 
 
 Pitching:
 - When the pitcher throws to a zone, he throws to the center of that zone
@@ -8,6 +7,7 @@ Pitching:
 - We have information on spin rates, but we assume spin rate does not effect the outcome transition probabilities
 
 Hitting:
+- We ignore all pitches in which the batter gets hit by a pitch
 
 Obvious Zones:
 - We create our Obvious Zone Cutoffs based on Righty and Lefty Batters. It might make more sense to partition 

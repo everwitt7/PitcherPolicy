@@ -6,8 +6,9 @@ from zone import Zone
 from zones import Zones
 from obvious_zones import ObviousZones
 from pitch import Pitch
-from pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames
+from pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames, Outcomes, CountStates
 from error_dist import NormalErrorDistribution
+from state import Count
 
 # defining the absolute path to our swing_trans matrix
 REL_PATH = '../data-cleaning/combining-data/swing_transitions.json'
@@ -149,7 +150,7 @@ norm_err_dist = {
 }
 
 
-def generate_pitches() -> List[Pitch]:
+def gen_pitches() -> List[Pitch]:
     """Instantiates all of our Pitch objects (by instantiating zone, obvious_zones, and zones)
 
     Returns
@@ -224,19 +225,33 @@ def generate_pitches() -> List[Pitch]:
     return pitches
 
 
-def gen_acc_mat(pitches) -> dict:
-    """Generates accuracy matrix by running error simulation for each pitch"""
+def gen_counts() -> List[Count]:
+    """Instantiates all of our Count state objects
+
+    Returns
+    -------
+    List[Count]
+        a list of all our Count state objects
+    """
+    return [Count(Outcomes, int(c.value[0]), int(c.value[1])) for c in CountStates]
+
+
+def gen_acc_mat(pitches: List[Pitch]) -> dict:
+    """Generates accuracy matrix by running error simulation for each pitch
+
+    Returns
+    -------
+    acc_mat
+        a dictionary to index [pitch][int_zone][act_zone] = %in_act_zone
+    """
     acc_mat = {}
     for p_name, pitch in pitches.items():
         acc_mat[p_name] = pitch.run_error_simuation()
     return acc_mat
 
-# should this be a class?
 # TODO: make transition probabilities a class (probably)
 
 
-# iterate through all the pitches in acc_mat (because we want to ignore obvious zones)
-#
 def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
     """Generates tansition probability matrix"""
     trans_prob_mat = {}
@@ -245,6 +260,7 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
         trans_prob_mat[pitch] = {}
 
         for int_zone in zones:
+            # TODO: need to unify these hardcoded strings to enums for the data read in swing/acc matrices
             trans_prob_mat[pitch][int_zone] = {
                 'take': {
                     'strike': 0, 'ball': 0
@@ -260,10 +276,10 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
             # pitches for which we ran an error simulation
             if int_zone in acc_mat[pitch]:
 
-                # TODO: do not use a fixed strike zone list...
-                for s_zone in ['0a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a']:
+                for s_zone in [s.value for s in StrikeZoneNames]:
                     if s_zone in acc_mat[pitch][int_zone]:
-                        trans_prob_mat[pitch][int_zone]['take']['strike'] += acc_mat[pitch][int_zone][s_zone]
+                        trans_prob_mat[pitch][int_zone]['take']['strike'] += \
+                            acc_mat[pitch][int_zone][s_zone]
                 trans_prob_mat[pitch][int_zone]['take']['ball'] = 1 - \
                     trans_prob_mat[pitch][int_zone]['take']['strike']
 
@@ -271,10 +287,12 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
 
                     for outcome, prob_outcome in swing_trans_mat[pitch][act_zone].items():
 
-                        trans_prob_mat[pitch][int_zone]['swing'][outcome] += prob_in_zone * prob_outcome
+                        trans_prob_mat[pitch][int_zone]['swing'][outcome] += \
+                            prob_in_zone * prob_outcome
             else:
                 trans_prob_mat[pitch][int_zone]['swing'] = swing_trans_mat[pitch][int_zone]
+        break
     return trans_prob_mat
 
 # TODO: refactor to class - write test that confirms transition probabilities sum to 1
-# TODO: improve documentation for acc_mat and trans_prob functions
+# TODO: improve documentation for acc_mat and trans_prob functions (use ENUMS Outcomes)

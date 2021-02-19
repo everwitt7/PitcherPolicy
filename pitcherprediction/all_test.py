@@ -6,10 +6,12 @@ from zone_test import TestZoneClass
 from obvious_zones_test import TestObviousZonesClass
 from zones_test import TestZonesClass
 from pitch_test import TestPitchClass
+from state_test import TestCountStateClass
 
 if __name__ == '__main__':
     test_classes_to_run = [TestNormalErrorDistributionClass,
-                           TestZoneClass, TestObviousZonesClass, TestZonesClass, TestPitchClass]
+                           TestZoneClass, TestObviousZonesClass,
+                           TestZonesClass, TestPitchClass, TestCountStateClass]
     loader = unittest.TestLoader()
 
     suites_list = []

@@ -51,6 +51,7 @@ class Pitch:
         ----------
         trials : int
             the number of times we run the simulation for each zone
+
         Returns
         -------
         dict

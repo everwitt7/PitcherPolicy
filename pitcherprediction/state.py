@@ -1,39 +1,46 @@
 """State Module"""
 
+from pitch_zone_enums import Outcomes
 
 
 class State:
     """State is the parent class of all state distributions
 
+    Attributes
+    ----------
+    outcomes : Outcomes
+        all the possible outcomes for a state (e.g. foul, out, hit, strike, ball)
+
     Methods
     -------
-    get_successors(pticher_action, batter_action): 
-        returns all possible successor states given optional pitcher and batter actions
+    get_successors():
+        returns all possible successor states based on all possible outcomes
     """
 
-    def __init__(self) -> None:
+    def __init__(self, outcomes: Outcomes) -> None:
         """Instatiates State object"""
+        self.outcomes = outcomes
 
-    def get_successors(self, pitcher_action=None,batter_action=None) -> list:
-        """Returns a list of possible next states
-        
-        Parameters
-        ----------
-        pitcher_action : string (optional)
-            pitcher's action
-        batter_action : string (optional)
-            batter's action (swing, take)
+    def get_successors(self) -> dict:
+        """Returns a dictionary of key, outcome and value, resulting state
 
         Returns
         -------
-        [State,...]
-            list of possible next states
+        dict
+            a dict of outcome and resulting state dict[outcome] = State
         """
-        
+
+    def get_state(self, balls: int, strikes: int) -> str:
+        """Returns the name of the state as a string
+
+        Returns
+        -------
+        str
+            name of the state
+        """
 
 
-
-class CountState(State):
+class Count(State):
     """Class used to represent CountState
 
     Attributes
@@ -42,15 +49,14 @@ class CountState(State):
         number of balls in the count
     strike_count : int
         number of strikes in the count
-  
 
     Methods
     -------
-    get_successors(pticher_action, batter_action)
-        returns all possible successor states given optional pitcher and batter actions
+    get_successors()
+        returns all possible successor states given outcomes
     """
 
-    def __init__(self, ball_count:int, strike_count:int):
+    def __init__(self, outcomes: Outcomes, num_balls: int, num_strikes: int) -> None:
         """Instantiates CountState object
 
         Parameters
@@ -60,68 +66,74 @@ class CountState(State):
         strike_count : int
             number of strikes in the count in range (0,2)
         """
+        super().__init__(outcomes)
+        self.num_balls = num_balls
+        self.num_strikes = num_strikes
 
-        if 0<=ball_count<=3 and 0<=strike_count<=2: 
-            self.ball_count= ball_count
-            self.strike_count= strike_count
-
-        else:
-            raise "Invalid ball or strike count"
-
-    def get_successors(self, pitcher_action=None,batter_action=None):
-        """Returns a list of possible successor CountStates
-
-        Parameters
-        ----------
-        pitcher_action : string
-            action of the pitcher in the at bat
-        batter_action : string
-            action of the batter in the at bat
+    def get_successors(self) -> dict:
+        """Returns a dictionary of possible successor states over outcomes (excluding out)
 
         Returns
         -------
-        [CountState,...]
-            a list of possible successor CountStates
+        dict
+            a dict of outcome and resulting state dict[outcome] = str(Count)
         """
-        
-        if pitcher_action == None and batter_action == None:
-            """If no actions are specified, return all possible successor states"""
-            possible_successors=[]
-            if self.ball_count<=2:
-                possible_successors.append(CountState(self.ball_count+1,self.strike_count))
-            if self.strike_count<=1:
-                possible_successors.append(CountState(self.ball_count,self.strike_count+1))
-            if self.strike_count==2:
-                """Foul ball"""
-                possible_successors.append(CountState(self.ball_count,self.strike_count))
-            return possible_successors
-        elif pitcher_action != None and batter_action != None:
-            """If actions are specified, return all possible successor states given actions"""
-            possible_successors=[]
-            if self.ball_count<=2:
-                possible_successors.append(CountState(self.ball_count+1,self.strike_count))
-            if self.strike_count<=1:
-                possible_successors.append(CountState(self.ball_count,self.strike_count+1))
-            if self.strike_count==2:
-                """Foul ball"""
-                possible_successors.append(CountState(self.ball_count,self.strike_count))
-            return possible_successors
-            
+        successors = {}
+        # count is full 3-2, ball -> hit, strike -> out
+        if self.num_balls == 3 and self.num_strikes == 2:
+            successors[self.outcomes.FOUL.value] = self.get_state(
+                self.num_balls, self.num_strikes)
+            successors[self.outcomes.HIT.value] = self.outcomes.HIT.value
+            successors[self.outcomes.BALL.value] = self.outcomes.HIT.value
+
+        # count is x-2, strike -> out
+        elif self.num_balls != 3 and self.num_strikes == 2:
+            successors[self.outcomes.FOUL.value] = self.get_state(
+                self.num_balls, self.num_strikes)
+            successors[self.outcomes.HIT.value] = self.outcomes.HIT.value
+            successors[self.outcomes.BALL.value] = self.get_state(
+                self.num_balls+1, self.num_strikes)
+
+        # count is 3-x, ball -> hit
+        elif self.num_balls == 3 and self.num_strikes != 2:
+            successors[self.outcomes.FOUL.value] = self.get_state(
+                self.num_balls, self.num_strikes+1)
+            successors[self.outcomes.HIT.value] = self.outcomes.HIT.value
+            successors[self.outcomes.STRIKE.value] = self.get_state(
+                self.num_balls, self.num_strikes+1)
+            successors[self.outcomes.BALL.value] = self.outcomes.HIT.value
+
         else:
-            raise "Specify either both pitcher_action and batter_action or neither"
-    
+            successors[self.outcomes.FOUL.value] = self.get_state(
+                self.num_balls, self.num_strikes+1)
+            successors[self.outcomes.HIT.value] = self.outcomes.HIT.value
+            successors[self.outcomes.STRIKE.value] = self.get_state(
+                self.num_balls, self.num_strikes+1)
+            successors[self.outcomes.BALL.value] = self.get_state(
+                self.num_balls+1, self.num_strikes)
+
+        return successors
+
+    def get_state(self, balls: int, strikes: int) -> str:
+        """Returns the name of the state as a string
+
+        Returns
+        -------
+        str
+            name of the state
+        """
+        return str(balls) + str(strikes)
 
     def __repr__(self):
         """Displays the inputs used to instantiate the object"""
         return (
-            f"CountState({self.ball_count}, {self.strike_count})"
+            f"Count({self.outcomes}, {self.num_balls}, {self.num_strikes})"
         )
 
     def __str__(self):
         """Prints information about the object"""
         return (
-            f"ball_count: {self.ball_count}, strike_count: {self.strike_count},"
+            f"outcomes: {self.outcomes},\
+            num_balls: {self.num_balls},\
+            num_strikes: {self.num_strikes}"
         )
-    def __eq__(self, other):
-        """Returns True if __repr__() of two objects are equal"""
-        return repr(other) == repr(self)
