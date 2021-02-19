@@ -232,20 +232,40 @@ def gen_acc_mat(pitches) -> dict:
     return acc_mat
 
 # should this be a class?
+# TODO: make transition probabilities a class (probably)
 
 
+# iterate through all the pitches in acc_mat (because we want to ignore obvious zones)
+#
 def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
     """Generates tansition probability matrix"""
-    trans_prob_mat = {}
-    for pitch in acc_mat:
-        trans_prob_mat[pitch] = {}
+    trans_prob_mat = {'swing': {}, 'take': {}}
 
-        for int_zone in acc_mat[pitch]:
-            trans_prob_mat[pitch][int_zone] = {'swing': {}, 'take': 0}
+    for pitch, zones in swing_trans_mat.items():
+        trans_prob_mat['swing'][pitch] = {}
+        trans_prob_mat['take'][pitch] = {}
 
-            for act_zone, pct in acc_mat[pitch][int_zone].items():
-                if act_zone in list(map(str, StrikeZoneNames)):
-                    trans_prob_mat[pitch][int_zone]['take'] += pct
-                trans_prob_mat[pitch][int_zone]['swing'] += pct * \
-                    swing_trans_mat[pitch][act_zone]
+        for int_zone in zones:
+            trans_prob_mat['take'][pitch][int_zone] = 0
+            trans_prob_mat['swing'][pitch][int_zone] = {
+                'foul': 0, 'out': 0, 'strike': 0, 'hit': 0, 'ball': 0
+            }
+            # pitches for which we ran an error simulation
+            if int_zone in acc_mat[pitch]:
+
+                # sometimes a zone in the strike zone does not exist...
+                for s_zone in ['0a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a']:
+                    if s_zone in acc_mat[pitch][int_zone]:
+                        trans_prob_mat['take'][pitch][int_zone] += acc_mat[pitch][int_zone][s_zone]
+
+                for act_zone, prob_in_zone in acc_mat[pitch][int_zone].items():
+
+                    for outcome, prob_outcome in swing_trans_mat[pitch][act_zone].items():
+
+                        trans_prob_mat['swing'][pitch][int_zone][outcome] += prob_in_zone * prob_outcome
+            else:
+                trans_prob_mat['swing'][pitch][int_zone] = swing_trans_mat[pitch][int_zone]
     return trans_prob_mat
+
+# TODO: refactor to class - write test that confirms transition probabilities sum to 1
+# TODO: improve documentation for acc_mat and trans_prob functions
