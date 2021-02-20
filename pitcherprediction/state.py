@@ -1,5 +1,4 @@
 """State Module"""
-
 from pitch_zone_enums import Outcomes
 
 

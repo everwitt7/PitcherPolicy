@@ -28,4 +28,4 @@ if __name__ == "__main__":
     print(trans_prob_mat)
 
     counts = gen_counts()
-    print(counts)
+    # print(counts)

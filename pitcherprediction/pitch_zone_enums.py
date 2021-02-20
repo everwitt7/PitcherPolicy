@@ -56,7 +56,7 @@ class PitchNames(Enum):
 
 
 @unique
-class BatterActions(Enum):
+class BatActs(Enum):
     """Enum for all possible batter actions"""
     SWING = 'swing'
     TAKE = 'take'

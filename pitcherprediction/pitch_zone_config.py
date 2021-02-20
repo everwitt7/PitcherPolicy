@@ -6,7 +6,8 @@ from zone import Zone
 from zones import Zones
 from obvious_zones import ObviousZones
 from pitch import Pitch
-from pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames, Outcomes, CountStates
+from pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames,\
+    Outcomes, CountStates, BatActs
 from error_dist import NormalErrorDistribution
 from state import Count
 
@@ -239,58 +240,82 @@ def gen_counts() -> List[Count]:
 def gen_acc_mat(pitches: List[Pitch]) -> dict:
     """Generates accuracy matrix by running error simulation for each pitch
 
+    Parameters
+    ----------
+    pitches : List[Pitch]
+        the list pitches a pitcher may throw
+
     Returns
     -------
-    acc_mat
-        a dictionary to index [pitch][int_zone][act_zone] = %in_act_zone
+    dict
+        an accuracy matrix dict to index [pitch][int_zone][act_zone] = %in_act_zone
     """
     acc_mat = {}
     for p_name, pitch in pitches.items():
         acc_mat[p_name] = pitch.run_error_simuation()
     return acc_mat
 
-# TODO: make transition probabilities a class (probably)
-
 
 def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
-    """Generates tansition probability matrix"""
+    """Generates tansition probability matrix
+
+    Parameters
+    ----------
+    swing_trans_mat : dict
+        dict that defines the probability of an outcome (foul, swing, out, hit, ball)
+        access probs by swing_trans_mat[pitch][zone][outcome] = %outcome
+    acc_mat : dict
+        dict that defines the accuracy matrix dict[pitch][int_zone][act_zone] = %in_act
+
+    Returns
+    -------
+    dict
+        a trans_prob_mat that contains the transition probabilities across all outcomes
+        for a given pitcher and batter action; trans_prob_mat[pitch][zone][swing] = outcome probs
+    """
     trans_prob_mat = {}
 
     for pitch, zones in swing_trans_mat.items():
         trans_prob_mat[pitch] = {}
 
         for int_zone in zones:
-            # TODO: need to unify these hardcoded strings to enums for the data read in swing/acc matrices
+
             trans_prob_mat[pitch][int_zone] = {
-                'take': {
-                    'strike': 0, 'ball': 0
+                BatActs.TAKE.value: {
+                    Outcomes.STRIKE.value: 0,
+                    Outcomes.BALL.value: 0
                 },
-                'swing': {
-                    'foul': 0, 'out': 0, 'strike': 0, 'hit': 0, 'ball': 0
+                BatActs.SWING.value: {
+                    Outcomes.OUT.value: 0,
+                    Outcomes.HIT.value: 0,
+                    Outcomes.FOUL.value: 0,
+                    Outcomes.STRIKE.value: 0,
+                    Outcomes.BALL.value: 0
                 }
             }
 
             if int_zone[-1] == 'b':
-                trans_prob_mat[pitch][int_zone]['take']['ball'] = 1
+                trans_prob_mat[pitch][int_zone][BatActs.TAKE.value][Outcomes.BALL.value] = 1
 
             # pitches for which we ran an error simulation
             if int_zone in acc_mat[pitch]:
 
                 for s_zone in [s.value for s in StrikeZoneNames]:
                     if s_zone in acc_mat[pitch][int_zone]:
-                        trans_prob_mat[pitch][int_zone]['take']['strike'] += \
-                            acc_mat[pitch][int_zone][s_zone]
-                trans_prob_mat[pitch][int_zone]['take']['ball'] = 1 - \
-                    trans_prob_mat[pitch][int_zone]['take']['strike']
+                        trans_prob_mat[pitch][int_zone][BatActs.TAKE.value][Outcomes.STRIKE.value]\
+                            += acc_mat[pitch][int_zone][s_zone]
+                trans_prob_mat[pitch][int_zone][BatActs.TAKE.value][Outcomes.BALL.value] =\
+                    1-trans_prob_mat[pitch][int_zone][BatActs.TAKE.value][Outcomes.STRIKE.value]
 
                 for act_zone, prob_in_zone in acc_mat[pitch][int_zone].items():
 
                     for outcome, prob_outcome in swing_trans_mat[pitch][act_zone].items():
 
-                        trans_prob_mat[pitch][int_zone]['swing'][outcome] += \
-                            prob_in_zone * prob_outcome
+                        trans_prob_mat[pitch][int_zone][BatActs.SWING.value][outcome]\
+                            += prob_in_zone * prob_outcome
             else:
-                trans_prob_mat[pitch][int_zone]['swing'] = swing_trans_mat[pitch][int_zone]
+                trans_prob_mat[pitch][int_zone][BatActs.SWING.value]\
+                    = swing_trans_mat[pitch][int_zone]
         break
     return trans_prob_mat
 
