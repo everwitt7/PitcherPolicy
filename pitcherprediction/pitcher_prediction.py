@@ -12,6 +12,7 @@ from stochastic_game import StochasticGame
 # TODO: change jupyter paths to from pathlib import Path then abs=Path(__file__).parent / relpath
 # TODO: make a pitch module that contains Zone, ObviousZone, ErrorDist, and Pitch information
 # TODO: add barcharts to make the outcome/transition probabilities easy to understand visually
+# TODO: fix JSON - replace single quotes with double quotes
 
 
 if __name__ == "__main__":
@@ -24,7 +25,11 @@ if __name__ == "__main__":
     swing_trans_mat = {}
     with open(SWING_TRANS_PATH) as json_file:
         swing_trans_mat = json.load(json_file)
+    # print(swing_trans_mat)
+
     acc_mat = gen_acc_mat(pitches)
+    # print(acc_mat)
+
     trans_prob_mat = gen_trans_prob_mat(swing_trans_mat, acc_mat)
     # print(trans_prob_mat)
 

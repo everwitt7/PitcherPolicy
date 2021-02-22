@@ -142,7 +142,7 @@ class StochasticGame:
 
         return state_val.solution_value(), optimal_policy
 
-    def run_val_iter(self, theta: float = 0.007):
+    def run_val_iter(self, theta: float = 0.001):
         """Runs value iteration until we see state value changes less than theta
 
         Parameters
