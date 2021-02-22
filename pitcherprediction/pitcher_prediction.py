@@ -3,6 +3,7 @@ import json
 
 from pitch_zone_config import gen_pitches, gen_counts,\
     gen_acc_mat, gen_trans_prob_mat, SWING_TRANS_PATH
+from stochastic_game import StochasticGame
 
 
 # TODO: State interface - just count, then count and outs, then count, outs, runners on base...
@@ -25,7 +26,10 @@ if __name__ == "__main__":
         swing_trans_mat = json.load(json_file)
     acc_mat = gen_acc_mat(pitches)
     trans_prob_mat = gen_trans_prob_mat(swing_trans_mat, acc_mat)
-    print(trans_prob_mat)
+    # print(trans_prob_mat)
 
     counts = gen_counts()
     # print(counts)
+
+    s = StochasticGame(counts, trans_prob_mat)
+    s.solve_game()

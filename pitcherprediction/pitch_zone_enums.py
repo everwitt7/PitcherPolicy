@@ -1,6 +1,8 @@
 """Module that defines enumerations for pitches, strike, ball, and obvious zones"""
 from enum import Enum, unique
 
+# TODO: refactor this into different enum classes - i.e. for classes within pitch and classes outside
+
 
 @unique
 class StrikeZoneNames(Enum):
@@ -53,6 +55,8 @@ class PitchNames(Enum):
     CHANGEUP = "CH"
     CURVE = "CU"
     CUTTER = "FC"
+
+# below here should be in a different class outside pitch module
 
 
 @unique
