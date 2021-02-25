@@ -12,7 +12,6 @@ from stochastic_game import StochasticGame
 # TODO: change jupyter paths to from pathlib import Path then abs=Path(__file__).parent / relpath
 # TODO: make a pitch module that contains Zone, ObviousZone, ErrorDist, and Pitch information
 # TODO: add barcharts to make the outcome/transition probabilities easy to understand visually
-# TODO: fix JSON - replace single quotes with double quotes
 
 
 if __name__ == "__main__":

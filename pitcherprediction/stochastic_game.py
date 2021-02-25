@@ -138,7 +138,9 @@ class StochasticGame:
         for pitch in p_actions:
             optimal_policy[pitch] = {}
             for zone in p_actions[pitch]:
-                optimal_policy[pitch][zone] = p_actions[pitch][zone].solution_value()
+                if p_actions[pitch][zone].solution_value() > 0:
+                    optimal_policy[pitch][zone] =\
+                        p_actions[pitch][zone].solution_value()
 
         return state_val.solution_value(), optimal_policy
 
@@ -172,7 +174,7 @@ class StochasticGame:
                 for pitch in self.trans_prob_mat:
                     q_vals[count.state_name][pitch] = {}
                     for zone in self.trans_prob_mat[pitch]:
-                        # we need to reset the q_vals everytime our state_vals change
+                        # we reset the q_vals everytime our state_vals change
                         q_vals[count.state_name][pitch][zone] = {
                             BatActs.SWING.value: 0,
                             BatActs.TAKE.value: 0
@@ -222,6 +224,8 @@ class StochasticGame:
             # if all state differences are < theta, then exit while loop
             if all_states_done:
                 break
+
+            iters += 1
 
         return state_val, policy
 
