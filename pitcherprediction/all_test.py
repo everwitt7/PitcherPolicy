@@ -6,12 +6,16 @@ from zone_test import TestZoneClass
 from obvious_zones_test import TestObviousZonesClass
 from zones_test import TestZonesClass
 from pitch_test import TestPitchClass
-from state_test import TestCountStateClass
+from state_test import TestCountClass
+from stochastic_game_test import TestStochasticGame
+
+# TODO write test for trans_prob_mat summing to 1 in here
 
 if __name__ == '__main__':
     test_classes_to_run = [TestNormalErrorDistributionClass,
                            TestZoneClass, TestObviousZonesClass,
-                           TestZonesClass, TestPitchClass, TestCountStateClass]
+                           TestZonesClass, TestPitchClass, TestCountClass,
+                           TestStochasticGame]
     loader = unittest.TestLoader()
 
     suites_list = []

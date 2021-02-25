@@ -4,21 +4,20 @@
 import unittest
 
 
-# from state import Count
+from state import Count
 
 
-# class TestCountStateClass(unittest.TestCase):
-#     """Test CountState"""
+class TestCountClass(unittest.TestCase):
+    """Test Count"""
 
-#     def setUp(self):
-#         self.count_state = State(0, 0)
+    def setUp(self):
+        pass
 
-# def test_get_successors(self):
-#     """Test CountState.get_successors"""
-#     intended_successors = [State(1, 0), State(0, 1)]
-#     actual_successors = self.count_state.get_successors()
+    def test_get_successor(self):
+        """Test Count.get_successor"""
 
-#     self.assertCountEqual(intended_successors, actual_successors)
+    def test_get_state(self):
+        """Test Count.get_state"""
 
 
 if __name__ == '__main__':

@@ -318,5 +318,4 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
                     = swing_trans_mat[pitch][int_zone]
     return trans_prob_mat
 
-# TODO: refactor to class - write test that confirms transition probabilities sum to 1
-# TODO: improve documentation for acc_mat and trans_prob functions (use ENUMS Outcomes)
+# TODO: write test that confirms transition probabilities sum to 1

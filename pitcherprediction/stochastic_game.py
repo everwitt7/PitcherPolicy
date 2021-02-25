@@ -4,8 +4,6 @@ from state import Count
 from ortools.linear_solver import pywraplp
 from pitch_zone_enums import BatActs, Outcomes
 
-# TODO: rename count to state
-
 
 class StochasticGame:
     """Class used to represent CountState
@@ -34,7 +32,7 @@ class StochasticGame:
         runs value iteration until we see changes less than theta
     """
 
-    def __init__(self, counts: List[Count], trans_prob_mat: dict) -> None:
+    def __init__(self, states: List[Count], trans_prob_mat: dict) -> None:
         """Instantiates StochasticGame object
 
         Parameters
@@ -44,7 +42,7 @@ class StochasticGame:
         trans_prob_mat : dict
             dict[pitch][zone][batact][outcome] = transition_probability
         """
-        self.counts = counts
+        self.states = states
         self.trans_prob_mat = trans_prob_mat
 
     def solve_game(self) -> None:
@@ -161,21 +159,21 @@ class StochasticGame:
         q_vals = {}
         policy = {}
         state_val = {}
-        for count in self.counts:
-            policy[count.state_name] = {}
-            state_val[count.state_name] = [0]
+        for state in self.states:
+            policy[state.state_name] = {}
+            state_val[state.state_name] = [0]
 
         # to keep track of the previous state value (storing in a list rather than last prev)
         iters = 0
         while True:
             all_states_done = True if iters > 0 else False
-            for count in self.counts:
-                q_vals[count.state_name] = {}
+            for state in self.states:
+                q_vals[state.state_name] = {}
                 for pitch in self.trans_prob_mat:
-                    q_vals[count.state_name][pitch] = {}
+                    q_vals[state.state_name][pitch] = {}
                     for zone in self.trans_prob_mat[pitch]:
                         # we reset the q_vals everytime our state_vals change
-                        q_vals[count.state_name][pitch][zone] = {
+                        q_vals[state.state_name][pitch][zone] = {
                             BatActs.SWING.value: 0,
                             BatActs.TAKE.value: 0
                         }
@@ -184,41 +182,41 @@ class StochasticGame:
                         for res, res_prob in\
                                 self.trans_prob_mat[pitch][zone][BatActs.SWING.value].items():
 
-                            # given a state and outcome, what is the next
-                            nxt_state = count.get_successor(res)
+                            # given a state and outcome, what is the next state
+                            nxt_state = state.get_successor(res)
 
                             if nxt_state == Outcomes.HIT.value:
-                                q_vals[count.state_name][pitch][zone][BatActs.SWING.value]\
+                                q_vals[state.state_name][pitch][zone][BatActs.SWING.value]\
                                     += res_prob
 
                             elif nxt_state != Outcomes.OUT.value:
-                                q_vals[count.state_name][pitch][zone][BatActs.SWING.value]\
+                                q_vals[state.state_name][pitch][zone][BatActs.SWING.value]\
                                     += res_prob * state_val[nxt_state][iters]
 
                         # compute take q_vals
                         for res, res_prob in\
                                 self.trans_prob_mat[pitch][zone][BatActs.TAKE.value].items():
 
-                            # given a state and outcome, what is the next
-                            nxt_state = count.get_successor(res)
+                            # given a state and outcome, what is the next state
+                            nxt_state = state.get_successor(res)
 
                             if nxt_state == Outcomes.HIT.value:
-                                q_vals[count.state_name][pitch][zone][BatActs.TAKE.value]\
+                                q_vals[state.state_name][pitch][zone][BatActs.TAKE.value]\
                                     += res_prob
 
                             elif nxt_state != Outcomes.OUT.value:
-                                q_vals[count.state_name][pitch][zone][BatActs.TAKE.value]\
+                                q_vals[state.state_name][pitch][zone][BatActs.TAKE.value]\
                                     += res_prob * state_val[nxt_state][iters]
 
                 # passing q_vals into LP to get state_val and policy
-                new_state_val, policy[count.state_name] = self.solve_lp(
-                    q_vals[count.state_name])
-                state_val[count.state_name].append(new_state_val)
+                new_state_val, policy[state.state_name] = self.solve_lp(
+                    q_vals[state.state_name])
+                state_val[state.state_name].append(new_state_val)
 
                 # checking if any state val difference is >= theta... if so do not exit
                 if iters > 0:
-                    if abs(state_val[count.state_name][iters] -
-                           state_val[count.state_name][iters-1]) >= theta:
+                    if abs(state_val[state.state_name][iters] -
+                           state_val[state.state_name][iters-1]) >= theta:
                         all_states_done = False
 
             # if all state differences are < theta, then exit while loop
@@ -229,15 +227,25 @@ class StochasticGame:
 
         return state_val, policy
 
-    def print_solution(self, state_vals: dict, state_policy: dict) -> None:
-        """ADD PRINTSOL DOCSTRING"""
-        for count in self.counts:
+    def print_solution(self, state_vals: List[dict], state_policy: dict) -> None:
+        """Prints the state_value and optimal policy for each state
+
+        Parameters
+        ----------
+        state_vals : List[dict]
+            list of state_value dicts that has state_val (val) for each state (key)
+            the list of length iters needed to break out of value iteration so we can
+            see how state_values updated
+        state_policy : dict
+            a dict that has the optimal policy (val) for each state (key)
+        """
+        for state in self.states:
             print(
-                f'Count: {count.state_name}, Value: {state_vals[count.state_name][-1]}')
-            for pitch in state_policy[count.state_name]:
-                for zone in state_policy[count.state_name][pitch]:
-                    if state_policy[count.state_name][pitch][zone] > 0:
+                f'Count: {state.state_name}, Value: {state_vals[state.state_name][-1]}')
+            for pitch in state_policy[state.state_name]:
+                for zone in state_policy[state.state_name][pitch]:
+                    if state_policy[state.state_name][pitch][zone] > 0:
                         print(
                             f'{pitch} {zone}:\
-                            {round(state_policy[count.state_name][pitch][zone], 5)}'
+                            {round(state_policy[state.state_name][pitch][zone], 5)}'
                         )

@@ -3,7 +3,7 @@ List of Assumptions
 Pitching:
 - When the pitcher throws to a zone, he throws to the center of that zone
 - Two-Seam and Sinkers are the same pitch
-- Pitchers' accuracy is independent of state (i.e. count, outs, runners are base are irrelevant)
+- Pitchers' accuracy is independent of state (i.e. count, outs, runners are base are irrelevant to accuracy)
 - We have information on spin rates, but we assume spin rate does not effect the outcome transition probabilities
 
 Hitting:

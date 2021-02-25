@@ -45,3 +45,7 @@ which we might be able to get from online for 2019?
 In which case we can feed:
 https://baseballsavant.mlb.com/gamefeed?game_pk=XXX&game_date=YYY
 where we dynamically feed XXX and YYY based on information we have
+
+- add barcharts to make the outcome/transition probabilities easy to understand visually
+
+- update the way display_zones visualizes the Pitch object, text is off when dimensions change
