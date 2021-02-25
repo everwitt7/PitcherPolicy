@@ -9,8 +9,6 @@ from pitch_test import TestPitchClass
 from state_test import TestCountClass
 from stochastic_game_test import TestStochasticGame
 
-# TODO write test for trans_prob_mat summing to 1 in here
-
 if __name__ == '__main__':
     test_classes_to_run = [TestNormalErrorDistributionClass,
                            TestZoneClass, TestObviousZonesClass,

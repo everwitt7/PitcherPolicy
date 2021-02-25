@@ -44,7 +44,7 @@ class Pitch:
         self.zones = zones
         self.error_dist = error_dist
 
-    def run_error_simuation(self, trials: int = 1000, seed: int = 0) -> dict:
+    def run_error_simuation(self, trials: int = 1000, SEED: int = 0) -> dict:
         """Runs a simulation to create an accuracy matrix based on zones and error dist
 
         Parameters
@@ -58,7 +58,7 @@ class Pitch:
             a dict[int][act] that has % of time the pitch ended in a zone
         """
         # setting seed for reproducibility
-        np.random.seed(0)
+        np.random.seed(SEED)
 
         acc_matrix = {}
         for zone in self.zones.strike_zones + self.zones.ball_zones:
