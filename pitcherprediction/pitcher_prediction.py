@@ -17,23 +17,18 @@ from stochastic_game import StochasticGame
 if __name__ == "__main__":
 
     pitches = gen_pitches()
-    # pitches['FF'].display_zones()
 
     # TODO: update the cleaning files so that swing transitions.json is in data-cleaning
     # TODO: instead of using strings use enums for zones
     swing_trans_mat = {}
     with open(SWING_TRANS_PATH) as json_file:
         swing_trans_mat = json.load(json_file)
-    # print(swing_trans_mat)
 
     acc_mat = gen_acc_mat(pitches)
-    # print(acc_mat)
 
     trans_prob_mat = gen_trans_prob_mat(swing_trans_mat, acc_mat)
-    # print(trans_prob_mat)
 
     counts = gen_counts()
-    # print(counts)
 
     s = StochasticGame(counts, trans_prob_mat)
     s.solve_game()
