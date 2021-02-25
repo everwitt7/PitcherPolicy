@@ -2,7 +2,7 @@
 
 import unittest
 
-from pitch_zone_enums import Outcomes
+from state_action_enums import Outcomes
 from state import Count
 
 

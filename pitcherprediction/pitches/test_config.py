@@ -3,7 +3,6 @@ from obvious_zones import ObviousZones
 from zone import Zone
 from zones import Zones
 from error_dist import NormalErrorDistribution
-# from pitch import Pitch
 
 LEFT_X = -3
 MID_LEFT_X = -1
