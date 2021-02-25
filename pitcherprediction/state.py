@@ -81,6 +81,7 @@ class Count(State):
 
         # return terminal states
         if res in [self.outcomes.HIT.value, self.outcomes.OUT.value]:
+            # print(res)
             return res
 
         # count is full 3-2, ball -> hit, strike -> out, foul -> itself
@@ -92,7 +93,7 @@ class Count(State):
             return self.state_name
 
         # count is x-2, strike -> out, foul -> itself
-        if self.num_balls != 3 and self.num_strikes == 2:
+        if self.num_balls < 3 and self.num_strikes == 2:
             if res == self.outcomes.STRIKE.value:
                 return self.outcomes.OUT.value
             if res == self.outcomes.BALL.value:
@@ -100,7 +101,7 @@ class Count(State):
             return self.state_name
 
         # count is 3-x, ball -> hit
-        if self.num_balls == 3 and self.num_strikes != 2:
+        if self.num_balls == 3 and self.num_strikes < 2:
             if res == self.outcomes.STRIKE.value:
                 return self.get_state(self.num_balls, self.num_strikes+1)
             if res == self.outcomes.BALL.value:
@@ -114,7 +115,8 @@ class Count(State):
             return self.get_state(self.num_balls+1, self.num_strikes)
         return self.get_state(self.num_balls, self.num_strikes+1)
 
-    def get_state(self, balls: int, strikes: int) -> str:
+    @classmethod
+    def get_state(cls, balls: int, strikes: int) -> str:
         """Returns the name of the state as a string
 
         Returns
