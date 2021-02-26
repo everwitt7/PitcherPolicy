@@ -3,9 +3,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from error_dist import ErrorDistribution
-from pitch_zone_enums import ObviousZoneNames
-from zones import Zones
+from pitches.error_dist import ErrorDistribution
+from pitches.pitch_zone_enums import ObviousZoneNames
+from pitches.zones import Zones
 
 
 class Pitch:

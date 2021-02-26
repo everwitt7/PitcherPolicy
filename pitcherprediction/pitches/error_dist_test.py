@@ -2,7 +2,7 @@
 
 import unittest
 
-from error_dist import NormalErrorDistribution
+from pitches.error_dist import NormalErrorDistribution
 
 
 class TestNormalErrorDistributionClass(unittest.TestCase):

@@ -1,9 +1,9 @@
 """Pitch Test Module"""
 import unittest
 
-from pitch import Pitch
-from pitch_zone_enums import PitchNames
-from test_config import TEST_ERR_DIST, TEST_ZONES
+from pitches.pitch import Pitch
+from pitches.pitch_zone_enums import PitchNames
+from pitches.test_config import TEST_ERR_DIST, TEST_ZONES
 
 
 class TestPitchClass(unittest.TestCase):

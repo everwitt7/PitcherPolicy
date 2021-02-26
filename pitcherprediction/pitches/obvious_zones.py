@@ -1,5 +1,5 @@
 """ObviousZones Module"""
-from pitch_zone_enums import ObviousZoneNames
+from pitches.pitch_zone_enums import ObviousZoneNames
 
 
 class ObviousZones:
