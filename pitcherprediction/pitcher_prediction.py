@@ -5,9 +5,6 @@ from pitch_zone_config import gen_pitches, gen_counts,\
     gen_acc_mat, gen_trans_prob_mat, SWING_TRANS_PATH
 from stochastic_game import StochasticGame
 
-# TODO: make a pitch module that contains Zone, ObviousZone, ErrorDist, and Pitch information
-
-
 if __name__ == "__main__":
 
     pitches = gen_pitches()
