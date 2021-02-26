@@ -1,7 +1,7 @@
 """ObviousZone Test Module"""
 import unittest
 
-from test_config import TEST_ZONES
+from pitches.test_config import TEST_ZONES
 
 
 class TestZonesClass(unittest.TestCase):

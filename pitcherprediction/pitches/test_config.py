@@ -1,9 +1,8 @@
 """Config file for tests"""
-from obvious_zones import ObviousZones
-from zone import Zone
-from zones import Zones
-from error_dist import NormalErrorDistribution
-# from pitch import Pitch
+from pitches.obvious_zones import ObviousZones
+from pitches.zone import Zone
+from pitches.zones import Zones
+from pitches.error_dist import NormalErrorDistribution
 
 LEFT_X = -3
 MID_LEFT_X = -1

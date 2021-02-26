@@ -1,8 +1,6 @@
 """Module that defines enumerations for pitches, strike, ball, and obvious zones"""
 from enum import Enum, unique
 
-# TODO: refactor this into different enum classes - i.e. for classes within pitch and classes outside
-
 
 @unique
 class StrikeZoneNames(Enum):
@@ -55,39 +53,3 @@ class PitchNames(Enum):
     CHANGEUP = "CH"
     CURVE = "CU"
     CUTTER = "FC"
-
-# below here should be in a different class outside pitch module
-
-
-@unique
-class BatActs(Enum):
-    """Enum for all possible batter actions"""
-    SWING = "swing"
-    TAKE = "take"
-
-
-@unique
-class Outcomes(Enum):
-    """Enum for all possible outcomes of a given count state"""
-    OUT = "out"
-    HIT = "hit"
-    FOUL = "foul"
-    STRIKE = "strike"
-    BALL = "ball"
-
-
-@unique
-class CountStates(Enum):
-    """Enum for all count states not including terminal states"""
-    ZEROZERO = "00"
-    ZEROONE = "01"
-    ZEROTWO = "02"
-    ONEZERO = "10"
-    ONEONE = "11"
-    ONETWO = "12"
-    TWOZERO = "20"
-    TWOONE = "21"
-    TWOTWO = "22"
-    THREEZERO = "30"
-    THREEONE = "31"
-    THREETWO = "32"

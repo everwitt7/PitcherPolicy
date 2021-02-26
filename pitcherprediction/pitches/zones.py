@@ -1,8 +1,8 @@
 """Zones Module"""
 from typing import List
 
-from obvious_zones import ObviousZones
-from zone import Zone
+from pitches.obvious_zones import ObviousZones
+from pitches.zone import Zone
 
 
 class Zones:

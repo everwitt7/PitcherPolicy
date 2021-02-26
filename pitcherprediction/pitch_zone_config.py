@@ -2,13 +2,14 @@
 from typing import List
 from pathlib import Path
 
-from zone import Zone
-from zones import Zones
-from obvious_zones import ObviousZones
-from pitch import Pitch
-from pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames,\
-    Outcomes, CountStates, BatActs
-from error_dist import NormalErrorDistribution
+from pitches.zone import Zone
+from pitches.pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames
+from pitches.obvious_zones import ObviousZones
+from pitches.zones import Zones
+from pitches.pitch import Pitch
+from pitches.error_dist import NormalErrorDistribution
+
+from state_action_enums import Outcomes, CountStates, BatActs
 from state import Count
 
 # defining the absolute path to our swing_trans matrix

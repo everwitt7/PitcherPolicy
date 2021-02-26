@@ -2,7 +2,7 @@
 
 import unittest
 
-from zone import Zone
+from pitches.zone import Zone
 
 
 class TestZoneClass(unittest.TestCase):

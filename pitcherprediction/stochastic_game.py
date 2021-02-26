@@ -2,7 +2,7 @@
 from typing import List
 from state import Count
 from ortools.linear_solver import pywraplp
-from pitch_zone_enums import BatActs, Outcomes
+from state_action_enums import BatActs, Outcomes
 
 
 class StochasticGame:
