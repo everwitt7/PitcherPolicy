@@ -5,6 +5,7 @@ Pitching:
 - Two-Seam and Sinkers are the same pitch
 - Pitchers' accuracy is independent of state (i.e. count, outs, runners are base are irrelevant to accuracy)
 - We have information on spin rates, but we assume spin rate does not effect the outcome transition probabilities
+- We assume pitch count is irrelevant, regardless of the number of pitches thrown the pitcher will be consistent
 
 Hitting:
 - We ignore all pitches in which the batter gets hit by a pitch
