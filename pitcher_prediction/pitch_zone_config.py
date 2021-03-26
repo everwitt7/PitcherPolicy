@@ -13,7 +13,7 @@ from state_action_enums import Outcomes, CountStates, BatActs
 from state import Count
 
 # defining the absolute path to our swing_trans matrix
-REL_PATH = '../data-cleaning/combining-data/swing_transitions.json'
+REL_PATH = '../data_cleaning/combining_data/swing_transitions.json'
 SWING_TRANS_PATH = Path(__file__).parent / REL_PATH
 
 # defining strike and obvious zone dimensions
