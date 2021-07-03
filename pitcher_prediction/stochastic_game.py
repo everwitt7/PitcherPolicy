@@ -44,6 +44,7 @@ class StochasticGame:
         """
         self.states = states
         self.trans_prob_mat = trans_prob_mat
+       
 
     def solve_game(self) -> None:
         """Solves the stochastic game given state and tranisition probabilities
@@ -162,7 +163,7 @@ class StochasticGame:
         for state in self.states:
             policy[state.state_name] = {}
             state_val[state.state_name] = [0]
-
+     
         # to keep track of the previous state value (storing in a list rather than last prev)
         iters = 0
         while True:
@@ -177,7 +178,7 @@ class StochasticGame:
                             BatActs.SWING.value: 0,
                             BatActs.TAKE.value: 0
                         }
-
+                
                         # compute swing q_vals
                         for res, res_prob in\
                                 self.trans_prob_mat[pitch][zone][BatActs.SWING.value].items():
@@ -190,6 +191,8 @@ class StochasticGame:
                                     += res_prob
 
                             elif nxt_state != Outcomes.OUT.value:
+                                #print(state_val[nxt_state][iters])
+                                #print(res_prob)
                                 q_vals[state.state_name][pitch][zone][BatActs.SWING.value]\
                                     += res_prob * state_val[nxt_state][iters]
 

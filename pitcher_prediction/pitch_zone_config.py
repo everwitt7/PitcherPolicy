@@ -2,6 +2,15 @@
 from typing import List
 from pathlib import Path
 
+import tensorflow as tf
+from tensorflow import keras        
+import numpy as np        
+import matplotlib.pyplot as plt
+from tensorflow.keras import models, layers, Input, optimizers, callbacks
+import json
+import numpy as np
+
+
 from pitches.zone import Zone
 from pitches.pitch_zone_enums import BallZoneNames, PitchNames, StrikeZoneNames
 from pitches.obvious_zones import ObviousZones
@@ -238,6 +247,88 @@ def gen_counts() -> List[Count]:
     return [Count(Outcomes, int(c.value[0]), int(c.value[1])) for c in CountStates]
 
 
+def gen_swing_trans_matrix(pitcher_id,batter_id):
+    """Creates swing transition matrix indexed by pitch type and count for a given pitcher/batter combination
+    Returns
+    _______
+    dict
+        a transition matrix dict to index [pitch_type][pitch_zone][s_count][b_count] = [prob_strike,prob_foul,prob_out,prob_hit]
+    """
+    #load pitcher tensors
+    file = open("../pitcher_tensors.json")
+    pitcher_tensors = json.load(file)
+    pitcher = np.array(pitcher_tensors[str(pitcher_id)])
+    file.close()
+    #load batter tensors
+    file = open("../batter_tensors.json")
+    batter_tensors = json.load(file)
+    batter = batter_tensors[str(batter_id)]
+    file.close()
+    #load model
+    model = models.load_model("../transition_model_2015-2019.h5")
+    #instantiate the dict
+    swing_transition_matrix = {}
+    #iterate over list of pitch types
+    for pitch_type in ["FF", "FT", "CU", "CH", "FC", "SL"]:
+        #iterate over zones
+        swing_transition_matrix[pitch_type] = {}
+        for zone in range(17):
+            zone_key = str(zone) + "a"
+            #generate pitch matrix
+            pitch_tensor = get_pitch_matrix(zone, pitch_type)
+            #iterate over s_count
+            swing_transition_matrix[pitch_type][zone_key] = {}
+
+            if zone >= 9 :
+                swing_transition_matrix[pitch_type][str(zone)+"b"] = {}
+            for s_count in range(3):
+                #iterate over b_count
+                swing_transition_matrix[pitch_type][zone_key][s_count] = {}
+                if zone >= 9 :
+                    swing_transition_matrix[pitch_type][str(zone)+"b"][s_count] = {}
+                for b_count in range(4):
+                    #generate prediction from model
+                    prediction = model.predict([np.array([pitcher]),np.array([batter]),np.array([s_count]),np.array([b_count]),np.array([pitch_tensor])])[0]
+                    cleaned_prediction = {
+                        Outcomes.OUT.value: prediction[2],
+                        Outcomes.HIT.value: prediction[3],
+                        Outcomes.FOUL.value: prediction[1],
+                        Outcomes.STRIKE.value: prediction[0]
+                    }
+                    swing_transition_matrix[pitch_type][zone_key][s_count][b_count] = cleaned_prediction
+                    if zone >= 9 :
+                        swing_transition_matrix[pitch_type][str(zone)+"b"][s_count][b_count] = {Outcomes.BALL.value:1}
+
+                    
+    #return dict
+    return swing_transition_matrix
+
+def get_pitch_matrix(zone, pitch_type):
+    pitch_types = ["FF", "FT", "CU", "CH", "FC", "SL"]
+    pitch_tensor = np.zeros((5,5,6))
+    p_ind = pitch_types.index(pitch_type)
+    zone_index_map = {
+        0:(1,1), #(x,y)
+        1:(2,1),
+        2:(3,1),
+        3:(1,2),
+        4:(2,2),
+        5:(3,2),
+        6:(1,3),
+        7:(2,3),
+        8:(3,3),
+        9:(0,0),
+        10:(np.s_[1:4],0),
+        11:(4,0),
+        12:(0,np.s_[1:4]),
+        13:(4,np.s_[1:4]),
+        14:(0,4),
+        15:(np.s_[1:4],4),
+        16:(4,4)
+    }
+    pitch_tensor[zone_index_map[zone][0],zone_index_map[zone][1], p_ind] = 1
+   
+    return pitch_tensor
 def gen_acc_mat(pitches: List[Pitch]) -> dict:
     """Generates accuracy matrix by running error simulation for each pitch
 
@@ -254,6 +345,7 @@ def gen_acc_mat(pitches: List[Pitch]) -> dict:
     acc_mat = {}
     for p_name, pitch in pitches.items():
         acc_mat[p_name] = pitch.run_error_simuation()
+    
     return acc_mat
 
 
@@ -275,12 +367,11 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
         for a given pitcher and batter action; trans_prob_mat[pitch][zone][swing] = outcome probs
     """
     trans_prob_mat = {}
-
+   
     for pitch, zones in swing_trans_mat.items():
         trans_prob_mat[pitch] = {}
 
         for int_zone in zones:
-
             trans_prob_mat[pitch][int_zone] = {
                 BatActs.TAKE.value: {
                     Outcomes.STRIKE.value: 0,
@@ -294,7 +385,7 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
                     Outcomes.BALL.value: 0
                 }
             }
-
+          
             if int_zone[-1] == 'b':
                 trans_prob_mat[pitch][int_zone][BatActs.TAKE.value][Outcomes.BALL.value] = 1
 
@@ -317,4 +408,82 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
             else:
                 trans_prob_mat[pitch][int_zone][BatActs.SWING.value]\
                     = swing_trans_mat[pitch][int_zone]
+  
     return trans_prob_mat
+
+
+def gen_nn_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
+    """Generates tansition probability matrix
+
+    Parameters
+    ----------
+    swing_trans_mat : dict
+        dict that defines the probability of an outcome (foul, swing, out, hit, ball)
+        access probs by swing_trans_mat[pitch][zone][outcome] = %outcome
+    acc_mat : dict
+        dict that defines the accuracy matrix dict[pitch][int_zone][act_zone] = %in_act
+
+    Returns
+    -------
+    dict
+        a trans_prob_mat that contains the transition probabilities across all outcomes
+        for a given pitcher and batter action; trans_prob_mat[pitch][zone][swing] = outcome probs
+    """
+    trans_prob_mat = {}
+
+    for pitch in swing_trans_mat.keys():
+        trans_prob_mat[pitch] = {}
+
+        for int_zone in swing_trans_mat[pitch].keys():
+            trans_prob_mat[pitch][int_zone] = {}
+
+            for s_count in swing_trans_mat[pitch][int_zone].keys():
+                trans_prob_mat[pitch][int_zone][s_count] = {}
+
+                for b_count in swing_trans_mat[pitch][int_zone][s_count].keys():
+        
+                    trans_prob_mat[pitch][int_zone][s_count][b_count] = {
+                        BatActs.TAKE.value: {
+                            Outcomes.STRIKE.value: 0,
+                            Outcomes.BALL.value: 0
+                        },
+                        BatActs.SWING.value: {
+                            Outcomes.OUT.value: 0,
+                            Outcomes.HIT.value: 0,
+                            Outcomes.FOUL.value: 0,
+                            Outcomes.STRIKE.value: 0,
+                            Outcomes.BALL.value: 0
+                        }
+                    }
+                    if int_zone[-1] == 'b':
+                       trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.BALL.value] = 1
+                    if int_zone in acc_mat[pitch]:
+
+                        for s_zone in [s.value for s in StrikeZoneNames]:
+                            if s_zone in acc_mat[pitch][int_zone]:
+                                trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.STRIKE.value]\
+                                    += acc_mat[pitch][int_zone][s_zone]
+
+                        trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.BALL.value] =\
+                            1-trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.STRIKE.value]
+
+                        for act_zone, prob_in_zone in acc_mat[pitch][int_zone].items():
+                        
+                            #print(swing_trans_mat[pitch])
+                            #print(swing_trans_mat[pitch][act_zone])
+                            #print(swing_trans_mat[pitch][act_zone][s_count])
+                            #print(swing_trans_mat[pitch][act_zone][s_count][b_count])
+                            for outcome, prob_outcome in swing_trans_mat[pitch][act_zone][s_count][b_count].items():
+
+                                trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.SWING.value][outcome]\
+                                    += prob_in_zone * prob_outcome
+                    else:
+                        trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.SWING.value]\
+                            = swing_trans_mat[pitch][int_zone][s_count][b_count]
+    
+    return trans_prob_mat
+
+
+
+
+    
