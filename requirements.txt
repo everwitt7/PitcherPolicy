@@ -29,7 +29,7 @@ numpy==1.19.5
 oauthlib==3.1.1
 opt-einsum==3.3.0
 ortools==8.1.8487
-Pillow==8.1.2
+Pillow==8.3.1
 pitches==0.1.0
 protobuf==3.15.0
 pyasn1==0.4.8
