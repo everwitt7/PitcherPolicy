@@ -169,8 +169,8 @@ class StochasticGame:
         while True:
             all_states_done = True if iters > 0 else False
             for state in self.states:
-                s_count = state.num_strikes
-                b_count = state.num_balls
+                count = state.state_name
+               
                 q_vals[state.state_name] = {}
                 for pitch in self.trans_prob_mat:
                     q_vals[state.state_name][pitch] = {}
@@ -183,7 +183,7 @@ class StochasticGame:
                 
                         # compute swing q_vals
                         for res, res_prob in\
-                                self.trans_prob_mat[pitch][zone][s_count][b_count][BatActs.SWING.value].items():
+                                self.trans_prob_mat[pitch][zone][count][BatActs.SWING.value].items():
                             
                             # given a state and outcome, what is the next state
                             nxt_state = state.get_successor(res)
@@ -200,7 +200,7 @@ class StochasticGame:
 
                         # compute take q_vals
                         for res, res_prob in\
-                                self.trans_prob_mat[pitch][zone][s_count][b_count][BatActs.TAKE.value].items():
+                                self.trans_prob_mat[pitch][zone][count][BatActs.TAKE.value].items():
 
                             # given a state and outcome, what is the next state
                             nxt_state = state.get_successor(res)

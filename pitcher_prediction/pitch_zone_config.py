@@ -282,11 +282,8 @@ def gen_swing_trans_matrix(pitcher_id,batter_id):
             if zone >= 9 :
                 swing_transition_matrix[pitch_type][str(zone)+"b"] = {}
             for s_count in range(3):
-                #iterate over b_count
-                swing_transition_matrix[pitch_type][zone_key][s_count] = {}
-                if zone >= 9 :
-                    swing_transition_matrix[pitch_type][str(zone)+"b"][s_count] = {}
                 for b_count in range(4):
+                    str_count = str(b_count)+str(s_count)
                     #generate prediction from model
                     prediction = model.predict([np.array([pitcher]),np.array([batter]),np.array([s_count]),np.array([b_count]),np.array([pitch_tensor])])[0]
                     cleaned_prediction = {
@@ -295,9 +292,9 @@ def gen_swing_trans_matrix(pitcher_id,batter_id):
                         Outcomes.FOUL.value: prediction[1],
                         Outcomes.STRIKE.value: prediction[0]
                     }
-                    swing_transition_matrix[pitch_type][zone_key][s_count][b_count] = cleaned_prediction
+                    swing_transition_matrix[pitch_type][zone_key][str_count] = cleaned_prediction
                     if zone >= 9 :
-                        swing_transition_matrix[pitch_type][str(zone)+"b"][s_count][b_count] = {Outcomes.BALL.value:1}
+                        swing_transition_matrix[pitch_type][str(zone)+"b"][str_count] = {Outcomes.BALL.value:1}
 
                     
     #return dict
@@ -437,49 +434,45 @@ def gen_nn_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict) -> dict:
         for int_zone in swing_trans_mat[pitch].keys():
             trans_prob_mat[pitch][int_zone] = {}
 
-            for s_count in swing_trans_mat[pitch][int_zone].keys():
-                trans_prob_mat[pitch][int_zone][s_count] = {}
-
-                for b_count in swing_trans_mat[pitch][int_zone][s_count].keys():
-        
-                    trans_prob_mat[pitch][int_zone][s_count][b_count] = {
-                        BatActs.TAKE.value: {
-                            Outcomes.STRIKE.value: 0,
-                            Outcomes.BALL.value: 0
-                        },
-                        BatActs.SWING.value: {
-                            Outcomes.OUT.value: 0,
-                            Outcomes.HIT.value: 0,
-                            Outcomes.FOUL.value: 0,
-                            Outcomes.STRIKE.value: 0,
-                            Outcomes.BALL.value: 0
-                        }
+            for count in swing_trans_mat[pitch][int_zone].keys():
+                trans_prob_mat[pitch][int_zone][count] = {
+                    BatActs.TAKE.value: {
+                        Outcomes.STRIKE.value: 0,
+                        Outcomes.BALL.value: 0
+                    },
+                    BatActs.SWING.value: {
+                        Outcomes.OUT.value: 0,
+                        Outcomes.HIT.value: 0,
+                        Outcomes.FOUL.value: 0,
+                        Outcomes.STRIKE.value: 0,
+                        Outcomes.BALL.value: 0
                     }
-                    if int_zone[-1] == 'b':
-                       trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.BALL.value] = 1
-                    if int_zone in acc_mat[pitch]:
+                }
+                if int_zone[-1] == 'b':
+                    trans_prob_mat[pitch][int_zone][count][BatActs.TAKE.value][Outcomes.BALL.value] = 1
+                if int_zone in acc_mat[pitch]:
 
-                        for s_zone in [s.value for s in StrikeZoneNames]:
-                            if s_zone in acc_mat[pitch][int_zone]:
-                                trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.STRIKE.value]\
-                                    += acc_mat[pitch][int_zone][s_zone]
+                    for s_zone in [s.value for s in StrikeZoneNames]:
+                        if s_zone in acc_mat[pitch][int_zone]:
+                            trans_prob_mat[pitch][int_zone][count][BatActs.TAKE.value][Outcomes.STRIKE.value]\
+                                += acc_mat[pitch][int_zone][s_zone]
 
-                        trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.BALL.value] =\
-                            1-trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.TAKE.value][Outcomes.STRIKE.value]
+                    trans_prob_mat[pitch][int_zone][count][BatActs.TAKE.value][Outcomes.BALL.value] =\
+                        1-trans_prob_mat[pitch][int_zone][count][BatActs.TAKE.value][Outcomes.STRIKE.value]
 
-                        for act_zone, prob_in_zone in acc_mat[pitch][int_zone].items():
-                        
-                            #print(swing_trans_mat[pitch])
-                            #print(swing_trans_mat[pitch][act_zone])
-                            #print(swing_trans_mat[pitch][act_zone][s_count])
-                            #print(swing_trans_mat[pitch][act_zone][s_count][b_count])
-                            for outcome, prob_outcome in swing_trans_mat[pitch][act_zone][s_count][b_count].items():
+                    for act_zone, prob_in_zone in acc_mat[pitch][int_zone].items():
+                    
+                        #print(swing_trans_mat[pitch])
+                        #print(swing_trans_mat[pitch][act_zone])
+                        #print(swing_trans_mat[pitch][act_zone][s_count])
+                        #print(swing_trans_mat[pitch][act_zone][s_count][b_count])
+                        for outcome, prob_outcome in swing_trans_mat[pitch][act_zone][count].items():
 
-                                trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.SWING.value][outcome]\
-                                    += prob_in_zone * prob_outcome
-                    else:
-                        trans_prob_mat[pitch][int_zone][s_count][b_count][BatActs.SWING.value]\
-                            = swing_trans_mat[pitch][int_zone][s_count][b_count]
+                            trans_prob_mat[pitch][int_zone][count][BatActs.SWING.value][outcome]\
+                                += prob_in_zone * prob_outcome
+                else:
+                    trans_prob_mat[pitch][int_zone][count][BatActs.SWING.value]\
+                        = swing_trans_mat[pitch][int_zone][count]
     
     return trans_prob_mat
 

@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     acc_mat = gen_acc_mat(pitches)
     nn_swing_trans_mat = gen_swing_trans_matrix(543037,448801)
-  
+
     trans_prob_mat = gen_trans_prob_mat(swing_trans_mat, acc_mat)
     
     nn_trans_prob_mat = gen_nn_trans_prob_mat(nn_swing_trans_mat, acc_mat)
