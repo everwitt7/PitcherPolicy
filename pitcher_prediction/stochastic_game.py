@@ -44,7 +44,6 @@ class StochasticGame:
         """
         self.states = states
         self.trans_prob_mat = trans_prob_mat
-       
 
     def solve_game(self) -> None:
         """Solves the stochastic game given state and tranisition probabilities
@@ -90,18 +89,18 @@ class StochasticGame:
             One can think of state_val as the OBP of a batter at a given state
         """
         solver = pywraplp.Solver(
-            'SolveSimpleSystem', pywraplp.Solver.GLOP_LINEAR_PROGRAMMING)
+            "SolveSimpleSystem", pywraplp.Solver.GLOP_LINEAR_PROGRAMMING
+        )
 
         # defining state value
-        state_val = solver.NumVar(0, solver.infinity(), 'state_val')
+        state_val = solver.NumVar(0, solver.infinity(), "state_val")
 
         # defining pitcher actions
         p_actions = {}
         for pitch in q_vals:
             p_actions[pitch] = {}
             for zone in q_vals[pitch]:
-                p_actions[pitch][zone] = solver.NumVar(
-                    0, max_pitch_pct, pitch+zone)
+                p_actions[pitch][zone] = solver.NumVar(0, max_pitch_pct, pitch + zone)
 
         # Constraint 1: state_val - sum(i = 0...n) { policy(i) * q(i,swing) } >= 0
         constraint1 = solver.Constraint(0, solver.infinity())
@@ -109,7 +108,9 @@ class StochasticGame:
         for pitch in q_vals:
             for zone in q_vals[pitch]:
                 constraint1.SetCoefficient(
-                    p_actions[pitch][zone], -1 * q_vals[pitch][zone][BatActs.SWING.value])
+                    p_actions[pitch][zone],
+                    -1 * q_vals[pitch][zone][BatActs.SWING.value],
+                )
 
         # Constraint 2: state_val - sum(i = 0...n) { policy(i) * q(i, take) } >= 0
         constraint2 = solver.Constraint(0, solver.infinity())
@@ -117,7 +118,8 @@ class StochasticGame:
         for pitch in q_vals:
             for zone in q_vals[pitch]:
                 constraint2.SetCoefficient(
-                    p_actions[pitch][zone], -1 * q_vals[pitch][zone][BatActs.TAKE.value])
+                    p_actions[pitch][zone], -1 * q_vals[pitch][zone][BatActs.TAKE.value]
+                )
 
         # Constraint 3: sum(x_optimal) = 1
         constraint3 = solver.Constraint(1, 1)
@@ -138,8 +140,9 @@ class StochasticGame:
             optimal_policy[pitch] = {}
             for zone in p_actions[pitch]:
                 if p_actions[pitch][zone].solution_value() > 0:
-                    optimal_policy[pitch][zone] =\
-                        p_actions[pitch][zone].solution_value()
+                    optimal_policy[pitch][zone] = p_actions[pitch][
+                        zone
+                    ].solution_value()
 
         return state_val.solution_value(), optimal_policy
 
@@ -163,7 +166,7 @@ class StochasticGame:
         for state in self.states:
             policy[state.state_name] = {}
             state_val[state.state_name] = [0]
-     
+
         # to keep track of the previous state value (storing in a list rather than last prev)
         iters = 0
         while True:
@@ -176,50 +179,62 @@ class StochasticGame:
                         # we reset the q_vals everytime our state_vals change
                         q_vals[state.state_name][pitch][zone] = {
                             BatActs.SWING.value: 0,
-                            BatActs.TAKE.value: 0
+                            BatActs.TAKE.value: 0,
                         }
-                
+
                         # compute swing q_vals
-                        for res, res_prob in\
-                                self.trans_prob_mat[pitch][zone][BatActs.SWING.value].items():
+                        for res, res_prob in self.trans_prob_mat[pitch][zone][
+                            BatActs.SWING.value
+                        ].items():
 
                             # given a state and outcome, what is the next state
                             nxt_state = state.get_successor(res)
 
                             if nxt_state == Outcomes.HIT.value:
-                                q_vals[state.state_name][pitch][zone][BatActs.SWING.value]\
-                                    += res_prob
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.SWING.value
+                                ] += res_prob
 
                             elif nxt_state != Outcomes.OUT.value:
-                                #print(state_val[nxt_state][iters])
-                                #print(res_prob)
-                                q_vals[state.state_name][pitch][zone][BatActs.SWING.value]\
-                                    += res_prob * state_val[nxt_state][iters]
+                                # print(state_val[nxt_state][iters])
+                                # print(res_prob)
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.SWING.value
+                                ] += (res_prob * state_val[nxt_state][iters])
 
                         # compute take q_vals
-                        for res, res_prob in\
-                                self.trans_prob_mat[pitch][zone][BatActs.TAKE.value].items():
+                        for res, res_prob in self.trans_prob_mat[pitch][zone][
+                            BatActs.TAKE.value
+                        ].items():
 
                             # given a state and outcome, what is the next state
                             nxt_state = state.get_successor(res)
 
                             if nxt_state == Outcomes.HIT.value:
-                                q_vals[state.state_name][pitch][zone][BatActs.TAKE.value]\
-                                    += res_prob
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.TAKE.value
+                                ] += res_prob
 
                             elif nxt_state != Outcomes.OUT.value:
-                                q_vals[state.state_name][pitch][zone][BatActs.TAKE.value]\
-                                    += res_prob * state_val[nxt_state][iters]
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.TAKE.value
+                                ] += (res_prob * state_val[nxt_state][iters])
 
                 # passing q_vals into LP to get state_val and policy
                 new_state_val, policy[state.state_name] = self.solve_lp(
-                    q_vals[state.state_name])
+                    q_vals[state.state_name]
+                )
                 state_val[state.state_name].append(new_state_val)
 
                 # checking if any state val difference is >= theta... if so do not exit
                 if iters > 0:
-                    if abs(state_val[state.state_name][iters] -
-                           state_val[state.state_name][iters-1]) >= theta:
+                    if (
+                        abs(
+                            state_val[state.state_name][iters]
+                            - state_val[state.state_name][iters - 1]
+                        )
+                        >= theta
+                    ):
                         all_states_done = False
 
             # if all state differences are < theta, then exit while loop
@@ -244,11 +259,12 @@ class StochasticGame:
         """
         for state in self.states:
             print(
-                f'Count: {state.state_name}, Value: {state_vals[state.state_name][-1]}')
+                f"Count: {state.state_name}, Value: {state_vals[state.state_name][-1]}"
+            )
             for pitch in state_policy[state.state_name]:
                 for zone in state_policy[state.state_name][pitch]:
                     if state_policy[state.state_name][pitch][zone] > 0:
                         print(
-                            f'{pitch} {zone}:\
-                            {round(state_policy[state.state_name][pitch][zone], 5)}'
+                            f"{pitch} {zone}:\
+                            {round(state_policy[state.state_name][pitch][zone], 5)}"
                         )
