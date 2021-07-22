@@ -21,7 +21,10 @@ from state import Count
 
 # defining the absolute path to our swing_trans matrix
 REL_PATH = "../data_cleaning/combining_data/swing_transitions.json"
-NN_REL_PATH = "./trans_prob_mat.json"
+
+# NN_REL_PATH = "./trans_prob_mat.json"
+NN_REL_PATH = "./high_obp_nn_prob_swing_trans_mat.json"
+
 SWING_TRANS_PATH = Path(__file__).parent / REL_PATH
 NN_SWING_TRANS_PATH = Path(__file__).parent / NN_REL_PATH
 
@@ -192,7 +195,8 @@ def gen_pitches() -> Dict[str, Pitch]:
                 elif z_name == BallZoneNames.TWELVE.value:
                     coords = (z_cuts[0], BOT_Y)
                     width = LEFT_X - z_cuts[0]
-                    height = 2 * TOP_Y if z_cuts[1] is None else z_cuts[1] + TOP_Y
+                    height = 2 * \
+                        TOP_Y if z_cuts[1] is None else z_cuts[1] + TOP_Y
                     b_zones.append(Zone(z_name, coords, width, height))
 
                 elif z_name == BallZoneNames.TEN.value:
@@ -210,7 +214,8 @@ def gen_pitches() -> Dict[str, Pitch]:
                 elif z_name == BallZoneNames.THIRTEEN.value:
                     coords = (RIGHT_X, BOT_Y)
                     width = z_cuts[0] - RIGHT_X
-                    height = 2 * TOP_Y if z_cuts[1] is None else z_cuts[1] + TOP_Y
+                    height = 2 * \
+                        TOP_Y if z_cuts[1] is None else z_cuts[1] + TOP_Y
                     b_zones.append(Zone(z_name, coords, width, height))
 
                 elif z_name == BallZoneNames.FIFTEEN.value:
