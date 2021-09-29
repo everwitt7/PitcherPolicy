@@ -1,12 +1,8 @@
 """Module that defines our Pitch classes"""
 from typing import List, Dict
-from pathlib import Path
 import numpy as np
 import json
 
-# import tensorflow as tf
-# from tensorflow import keras
-# import matplotlib.pyplot as plt
 from tensorflow.keras import models
 
 from pitches.zone import Zone
@@ -19,14 +15,9 @@ from pitches.error_dist import NormalErrorDistribution
 from state_action_enums import Outcomes, CountStates, BatActs
 from state import Count
 
-# defining the absolute path to our swing_trans matrix
-REL_PATH = "../data_cleaning/combining_data/swing_transitions.json"
-
-# NN_REL_PATH = "./trans_prob_mat.json"
-NN_REL_PATH = "./high_obp_nn_prob_swing_trans_mat.json"
-
-SWING_TRANS_PATH = Path(__file__).parent / REL_PATH
-NN_SWING_TRANS_PATH = Path(__file__).parent / NN_REL_PATH
+# transition matrix paths
+SWING_TRANS_PATH = "./swing_transitions.json"
+NN_SWING_TRANS_PATH = "./high_obp_nn_prob_swing_trans_mat.json"
 
 # defining strike and obvious zone dimensions
 LEFT_X = -0.831

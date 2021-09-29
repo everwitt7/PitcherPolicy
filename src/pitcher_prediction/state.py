@@ -70,7 +70,7 @@ class Count(State):
         self.num_strikes = num_strikes
         self.state_name = str(num_balls) + str(num_strikes)
 
-    def get_successor(self, res: str) -> dict:
+    def get_successor(self, res: str) -> str:
         """Returns a dictionary of possible successor states over outcomes (excluding out)
 
         Returns
@@ -97,23 +97,23 @@ class Count(State):
             if res == self.outcomes.STRIKE.value:
                 return self.outcomes.OUT.value
             if res == self.outcomes.BALL.value:
-                return self.get_state(self.num_balls+1, self.num_strikes)
+                return self.get_state(self.num_balls + 1, self.num_strikes)
             return self.state_name
 
         # count is 3-x, ball -> hit
         if self.num_balls == 3 and self.num_strikes < 2:
             if res == self.outcomes.STRIKE.value:
-                return self.get_state(self.num_balls, self.num_strikes+1)
+                return self.get_state(self.num_balls, self.num_strikes + 1)
             if res == self.outcomes.BALL.value:
                 return self.outcomes.HIT.value
-            return self.get_state(self.num_balls, self.num_strikes+1)
+            return self.get_state(self.num_balls, self.num_strikes + 1)
 
         # count is not 3-x or x-2
         if res == self.outcomes.STRIKE.value:
-            return self.get_state(self.num_balls, self.num_strikes+1)
+            return self.get_state(self.num_balls, self.num_strikes + 1)
         if res == self.outcomes.BALL.value:
-            return self.get_state(self.num_balls+1, self.num_strikes)
-        return self.get_state(self.num_balls, self.num_strikes+1)
+            return self.get_state(self.num_balls + 1, self.num_strikes)
+        return self.get_state(self.num_balls, self.num_strikes + 1)
 
     @classmethod
     def get_state(cls, balls: int, strikes: int) -> str:

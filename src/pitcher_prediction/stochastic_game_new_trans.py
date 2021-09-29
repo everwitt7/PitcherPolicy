@@ -60,7 +60,7 @@ class StochasticGame:
 
         # we want this to get the results and then print them too
 
-    def solve_lp(self, q_vals: dict, max_pitch_pct: float = 0.7) -> (int, dict):
+    def solve_lp(self, q_vals: dict, max_pitch_pct: float = 0.7) -> tuple[int, dict]:
         """Solves the linear program to get state value and policy
 
         Parameters
@@ -122,7 +122,8 @@ class StochasticGame:
         for pitch in q_vals:
             for zone in q_vals[pitch]:
                 constraint2.SetCoefficient(
-                    p_actions[pitch][zone], -1 * q_vals[pitch][zone][BatActs.TAKE.value]
+                    p_actions[pitch][zone], -1 *
+                    q_vals[pitch][zone][BatActs.TAKE.value]
                 )
 
         # Constraint 3: sum(x_optimal) = 1
