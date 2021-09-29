@@ -19,6 +19,7 @@ certifi==2021.5.30
 cffi @ file:///opt/concourse/worker/volumes/live/976f8942-f51d-4f0e-7352-2a10f0820d0e/volume/cffi_1625814703974/work
 chardet==3.0.4
 charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+clang==5.0
 click==7.1.2
 conda==4.10.3
 conda-package-handling @ file:///opt/concourse/worker/volumes/live/8fb3e065-760b-4a9d-4cd9-aca7fc8baf53/volume/conda-package-handling_1618262145611/work
@@ -35,7 +36,7 @@ gast==0.4.0
 google-auth==1.32.1
 google-auth-oauthlib==0.4.4
 google-pasta==0.2.0
-grpcio==1.34.1
+grpcio==1.41.0
 h5py==3.1.0
 idna @ file:///tmp/build/80754af9/idna_1622654382723/work
 importlib-metadata @ file:///opt/concourse/worker/volumes/live/bdafb81c-7edc-4122-77fe-a69839ec3c71/volume/importlib-metadata_1617877361684/work
@@ -58,6 +59,7 @@ jupyterlab @ file:///home/conda/feedstock_root/build_artifacts/jupyterlab_161619
 jupyterlab-pygments @ file:///tmp/build/80754af9/jupyterlab_pygments_1601490720602/work
 jupyterlab-server @ file:///tmp/build/80754af9/jupyterlab_server_1629763241507/work
 jupyterlab-widgets @ file:///tmp/build/80754af9/jupyterlab_widgets_1609884341231/work
+keras==2.6.0
 keras-nightly==2.5.0.dev2021032900
 Keras-Preprocessing==1.1.2
 kiwisolver @ file:///opt/concourse/worker/volumes/live/f8867fdb-2fa2-4145-73d9-4d6f6dad5f7c/volume/kiwisolver_1612282424136/work
@@ -82,7 +84,7 @@ nbformat @ file:///tmp/build/80754af9/nbformat_1617383369282/work
 nest-asyncio @ file:///tmp/build/80754af9/nest-asyncio_1613680548246/work
 notebook @ file:///opt/concourse/worker/volumes/live/cd031361-cbf3-45df-7e31-c700db2e25eb/volume/notebook_1629205781669/work
 numexpr @ file:///opt/concourse/worker/volumes/live/8a490d79-0e07-4fed-40fc-a78f896e4811/volume/numexpr_1618856522733/work
-numpy @ file:///opt/concourse/worker/volumes/live/9909a8d0-9b8e-44eb-6059-6c668078c029/volume/numpy_and_numpy_base_1626271794641/work
+numpy==1.19.5
 oauthlib==3.1.1
 olefile @ file:///Users/ktietz/demo/mc3/conda-bld/olefile_1629805411829/work
 opt-einsum==3.3.0
@@ -128,13 +130,13 @@ scipy @ file:///opt/concourse/worker/volumes/live/8e481b15-67b8-4160-7a8b-26cd6e
 seaborn @ file:///tmp/build/80754af9/seaborn_1629307859561/work
 Send2Trash @ file:///tmp/build/80754af9/send2trash_1607525499227/work
 sip==4.19.13
-six @ file:///tmp/build/80754af9/six_1623709665295/work
+six==1.15.0
 sniffio @ file:///opt/concourse/worker/volumes/live/38ca9e9e-09d1-4d43-5a0f-b546422e7807/volume/sniffio_1614030472707/work
-tensorboard==2.5.0
+tensorboard==2.6.0
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
-tensorflow==2.5.0
-tensorflow-estimator==2.5.0
+tensorflow==2.6.0
+tensorflow-estimator==2.6.0
 termcolor==1.1.0
 terminado==0.9.4
 testpath @ file:///tmp/build/80754af9/testpath_1624638946665/work
