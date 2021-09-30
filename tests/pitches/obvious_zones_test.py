@@ -2,7 +2,7 @@
 
 import unittest
 
-from pitches.obvious_zones import ObviousZones
+from pitchprediction.pitches.obvious_zones import ObviousZones
 
 
 class TestObviousZonesClass(unittest.TestCase):

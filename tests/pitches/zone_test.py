@@ -2,7 +2,7 @@
 
 import unittest
 
-from pitches.zone import Zone
+from pitchprediction.pitches.zone import Zone
 
 
 class TestZoneClass(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestZoneClass(unittest.TestCase):
 
     def test_get_center(self):
         """Test Zone.get_center function"""
-        self.assertEqual(self.zone.get_center(), (3/2, 5/2))
+        self.assertEqual(self.zone.get_center(), (3 / 2, 5 / 2))
 
     def test_in_zone(self):
         """Test Zone.in_zone function"""

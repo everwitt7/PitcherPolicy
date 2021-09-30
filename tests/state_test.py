@@ -2,8 +2,8 @@
 
 import unittest
 
-from state_action_enums import Outcomes
-from state import Count
+from pitchprediction.state_action_enums import Outcomes
+from pitchprediction.state import Count
 
 
 class TestCountClass(unittest.TestCase):

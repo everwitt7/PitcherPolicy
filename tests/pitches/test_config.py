@@ -1,8 +1,8 @@
 """Config file for tests"""
-from pitches.obvious_zones import ObviousZones
-from pitches.zone import Zone
-from pitches.zones import Zones
-from pitches.error_dist import NormalErrorDistribution
+from pitchprediction.pitches.obvious_zones import ObviousZones
+from pitchprediction.pitches.zone import Zone
+from pitchprediction.pitches.zones import Zones
+from pitchprediction.pitches.error_dist import NormalErrorDistribution
 
 LEFT_X = -3
 MID_LEFT_X = -1
@@ -78,27 +78,27 @@ ball_zone_inputs = {
         "width": 1
     },
     "9a": {
-        "coords": (-1+LEFT_X, TOP_Y),
+        "coords": (-1 + LEFT_X, TOP_Y),
         "height": 1,
         "width": 1
     },
     "12a": {
-        "coords": (-1+LEFT_X, BOT_Y),
+        "coords": (-1 + LEFT_X, BOT_Y),
         "height": 5,
         "width": 1
     },
     "15a": {
-        "coords": (LEFT_X, -1+BOT_Y),
+        "coords": (LEFT_X, -1 + BOT_Y),
         "height": 1,
         "width": 6
     },
     "16a": {
-        "coords": (RIGHT_X, -1+BOT_Y),
+        "coords": (RIGHT_X, -1 + BOT_Y),
         "height": 1,
         "width": 1
     },
     "14a": {
-        "coords": (-1+LEFT_X, -1+BOT_Y),
+        "coords": (-1 + LEFT_X, -1 + BOT_Y),
         "height": 1,
         "width": 1
     }
