@@ -6,7 +6,6 @@ certifi==2021.5.30
 charset-normalizer==2.0.6
 clang==5.0
 cycler==0.10.0
-dataclasses==0.8
 flatbuffers==1.12
 gast==0.4.0
 google-auth==1.35.0
