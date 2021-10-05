@@ -1,28 +1,31 @@
-# Pitch-Prediction
+# Pitch-Policy
+
 
 ## Local Setup
 
-1. Clone Repository: `https://github.com/everwitt7/Pitch-Prediction.git`
-2. Create a Virtual Enviornment: `python -m venv venv`
-2. Source It: `source venv/bin/activate`
+1. Clone repository: `https://github.com/everwitt7/Pitch-Prediction.git`
+2. Create a virtual environment: `python -m venv venv`
+2. Activate virtual environment: `source venv/bin/activate`
 3. Install requirements: `pip install -r requirements.txt`
-4. Run `pitcher_prediction.py`
+4. Navigate to subfolder: `cd pitcher_policy`
+5. Run `pitcher_policy.py`
 
 ## Run Tests
 
 `python -m unittest -v all_test.py`
 
-## Raw Data
-[Pitch by Pitch Baseball Data](https://www.kaggle.com/pschale/mlb-pitch-data-20152018)
-Unfortunately the MLB decided to crackdown on its publicly available data, so it is no longer possible to scrape this data; this is the best data we have access to. To combine the data look at `./data-cleaning/combining-data` jupyter notebooks. They will take these raw files and output a comprehensive csv that combines all available seasons. Using those CSVs we compute the Transition Probabilities of a Batter Swinging (`./data-cleaning/combining-data/swing_transitions.json`) 
 
-## Overview
 
-In a two-player zero-sum Markov game, two adaptive agents interact in a defined environment with probabilistic transition functions. This stochastic game is thus a useful framework when trying to model two agents with opposite goals. An at-bat in the game of baseball has two agents, pitcher and batter, with competing goals, and this paper aims to model this environment as a Markov game in order to find the optimal probabilistic policy for the pitcher to minimize the batter’s utility. Because we have the data readily available, we are not learning the optimal policy but rather solving for it analytically.
+## Abstract 
 
-In short, we consider baseball to be a two player zero sum stochastic game for the pitcher and batter. The batter hopes to get on base, the pitchers hopes to get the batter out - their goals are diametrically opposed. We consider the states of the game to be all possible counts (one can make the states more complex by considering runners on base, outs, etc...), the batter actions to be swing and take, and the pitcher actions to be a combination of pitch type and pitch location. We can solve this game by running value iteration, where at each state we formulate the state value and pitcher policy by framing the problem as a minimax game (the pitcher tries to get the batter out, the batter tries to get on base). We can solve this linear program to get state value and the pitcher's optimal policy. We do this for each state until every state value changes be less than theta, in which case we are done and can return state values and state pitcher policies. 
-
-We consider all states to have 0 reward except for the terminal state of getting on base, in which case we give a reward with 1 (to make the game more realistic, it would make sense to consider more complex states and a reward of 1 any time a runner scores, then we can minimize runs instead of OBP). Given the problem formulation, state values actually represent the OBP of a batter, so we can compare the OBP of a new count, 0-0, with historical OBP to see if pitchers can perform better by simply changing their decision making at certain counts.
+The field of quantitative analytics has transformed the world of sports over the last decade. To date, these analytic approaches are statistical at their core, characterizing what is and what was, while using this information to drive decisions about what to do in the future. However, as we often view team sports, such as soccer, hockey, and baseball, as pairwise win-lose encounters, it seems natural to model these as zero-sum games. We propose such a model for one important class of sports encounters: a baseball at-bat, which is a matchup between a pitcher and a batter. Specifically, we propose a novel model of this encounter as a zero-sum stochastic game, in which the goal of the batter is to get on base, an outcome the pitcher aims to prevent. The value of this game is the on-base percentage (i.e., the probability that the batter gets on base). In principle, this stochastic game can be solved using classical approaches. The main technical challenges lie in predicting the distribution of pitch locations as a function of pitcher intention, predicting the distribution of outcomes if the batter decides to swing at a pitch, and characterizing the level of patience of a particular batter. We address these challenges by proposing novel pitcher and batter representations as well as a novel deep neural network architecture for outcome prediction. Our experiments using Kaggle data from the 2015 to 2018 Major League Baseball seasons demonstrate the efficacy of the proposed approach.
 
 Link to full paper:
 [ToDo]()
+
+## Raw Data
+[Pitch by Pitch Baseball Data](https://www.kaggle.com/pschale/mlb-pitch-data-20152018)
+Unfortunately the MLB decided to crackdown on its publicly available data, so it is no longer possible to scrape this data; this is the best data we have access to. We noted some errors in the 2019 scraped data surrounding correct strike and ball counts. As a result, we focus on the available 2015-2018 data.
+
+## Overview
+To combine the data look at `./data_cleaning/combining-data/pitch_and_at_bat.ipynb`. This will take these raw files and output comprehensive csv files that clean the raw data. Using this data, we refine the data and train our models in `./model_training`. We also save the pitcher and batter tensors needed to run the stochastic game. Using the saved models and tensors from the training notebooks (saved in `./models` and `./tensors`, respectively ), we run the Stochastic Game in `./pitcher_policy`, specifying the pitcher and batter in `./pitcher_policy/pitcher_policy.py`.
