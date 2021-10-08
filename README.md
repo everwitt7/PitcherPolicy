@@ -3,8 +3,8 @@
 ## Local Setup
 
 1. Clone repository: `https://github.com/everwitt7/Pitch-Prediction.git`
-2. Create a virtual environment: `python -m venv .env`
-2. Activate virtual environment: `source .env/bin/activate`
+2. Create a virtual environment: `python -m venv .venv`
+2. Activate virtual environment: `source .venv/bin/activate`
 3. Install requirements: `pip install -r requirements.txt`
 4. Navigate to subfolder: `cd pitcherpolicy`
 5. Run `python pitcherpolicy.py`
