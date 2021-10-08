@@ -3,11 +3,7 @@ from re import T
 from typing import List, Dict
 from pathlib import Path
 import numpy as np
-import json
 
-# import tensorflow as tf
-# from tensorflow import keras
-# import matplotlib.pyplot as plt
 from tensorflow.keras import models
 
 from pitches.zone import Zone
