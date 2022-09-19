@@ -18,39 +18,39 @@ from stochastic_game import StochasticGame
 
 if __name__ == "__main__":
 
+
     # load pitcher tensors
-    with open("./tensors/pitcher_tensors.json") as f:
+    with open("../tensors/pitcher_tensors.json") as f:
         pitcher_tensors = json.load(f)
+        
 
     # load batter tensors
-    with open("./tensors/batter_tensors.json") as f:
+    with open("../tensors/batter_tensors.json") as f:
         batter_tensors = json.load(f)
-
     # open 3 TensorFlow models
     take_model = models.load_model("../models/take_2015-2018.h5")
-    swing_trans_model = models.load_model(
-        "../models/transition_model_2015-2018.h5")
+    #swing_trans_model = models.load_model("../models/transition_model_2015-2018.h5")
+    swing_trans_model = models.load_model("../models/transition_model_expanded_outcomes.h5")
     acc_model = models.load_model("../models/error_2015-2018.h5")
 
     # Set pitcher/batter matchup for the at bat
-    pitcher_id, batter_id = 543037, 448801  # Gerrit Cole, Chris Davis
+    pitcher_id, batter_id = 543037, 448801 #Gerrit Cole, Chris Davis
 
     pitcher = np.array(pitcher_tensors[str(pitcher_id)])
     batter = np.array(batter_tensors[str(batter_id)])
 
     pitches = gen_pitches()
     counts = gen_counts()
-
-    acc_mat = gen_acc_mat(acc_model, pitcher, pitches)
+    
+    acc_mat = gen_acc_mat(acc_model,pitcher,pitches)
     take_mat = gen_take_mat(take_model, batter, pitches, .2)
-    nn_swing_trans_mat = gen_swing_trans_matrix(
-        swing_trans_model, pitcher, batter, take_mat, pitches)
-    nn_trans_prob_mat = gen_trans_prob_mat(
-        nn_swing_trans_mat, acc_mat, take_mat)
+    nn_swing_trans_mat = gen_swing_trans_matrix(swing_trans_model, pitcher, batter, take_mat, pitches)
+    nn_trans_prob_mat = gen_trans_prob_mat(nn_swing_trans_mat, acc_mat, take_mat)
+    outcome_values = {"single":3,"double":5,"triple":8,"homerun":10}
+    s1 = StochasticGame(counts, nn_trans_prob_mat, outcome_values)
+    
+    s1_vals, s1_pol, s1_outcome_probs = s1.solve_game()
 
-    s1 = StochasticGame(counts, nn_trans_prob_mat)
-
-    s1_vals, s1_pol = s1.solve_game()
 
     """
     FOR AGGREGATE TESTING
@@ -114,4 +114,6 @@ if __name__ == "__main__":
     with open("value_iter_outcomes.json", "w") as outfile: 
         json.dump(results, outfile)
     print("SAVED")
-    """
+    """      
+   
+          

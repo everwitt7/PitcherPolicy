@@ -13,7 +13,10 @@ class BatActs(Enum):
 class Outcomes(Enum):
     """Enum for all possible outcomes of a given count state"""
     OUT = "out"
-    HIT = "hit"
+    SINGLE = "single"
+    DOUBLE = "double"
+    TRIPLE = "triple"
+    HOMERUN = "homerun"
     FOUL = "foul"
     STRIKE = "strike"
     BALL = "ball"

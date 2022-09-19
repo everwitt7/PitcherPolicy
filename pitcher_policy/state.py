@@ -8,7 +8,7 @@ class State:
     Attributes
     ----------
     outcomes : Outcomes
-        all the possible outcomes for a state (e.g. foul, out, hit, strike, ball)
+        all the possible outcomes for a state (e.g. foul, out, single, double, triple, homerun, strike, ball)
 
     Methods
     -------
@@ -80,16 +80,16 @@ class Count(State):
         """
 
         # return terminal states
-        if res in [self.outcomes.HIT.value, self.outcomes.OUT.value]:
+        if res in [self.outcomes.SINGLE.value,self.outcomes.DOUBLE.value, self.outcomes.TRIPLE.value, self.outcomes.HOMERUN.value, self.outcomes.OUT.value]:
             # print(res)
             return res
 
-        # count is full 3-2, ball -> hit, strike -> out, foul -> itself
+        # count is full 3-2, ball -> single (walk), strike -> out, foul -> itself
         if self.num_balls == 3 and self.num_strikes == 2:
             if res == self.outcomes.STRIKE.value:
                 return self.outcomes.OUT.value
             if res == self.outcomes.BALL.value:
-                return self.outcomes.HIT.value
+                return self.outcomes.SINGLE.value
             return self.state_name
 
         # count is x-2, strike -> out, foul -> itself
@@ -100,12 +100,12 @@ class Count(State):
                 return self.get_state(self.num_balls+1, self.num_strikes)
             return self.state_name
 
-        # count is 3-x, ball -> hit
+        # count is 3-x, ball -> single (walk)
         if self.num_balls == 3 and self.num_strikes < 2:
             if res == self.outcomes.STRIKE.value:
                 return self.get_state(self.num_balls, self.num_strikes+1)
             if res == self.outcomes.BALL.value:
-                return self.outcomes.HIT.value
+                return self.outcomes.SINGLE.value
             return self.get_state(self.num_balls, self.num_strikes+1)
 
         # count is not 3-x or x-2

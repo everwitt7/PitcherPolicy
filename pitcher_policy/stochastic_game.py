@@ -32,7 +32,7 @@ class StochasticGame:
         runs value iteration until we see changes less than theta
     """
 
-    def __init__(self, states: List[Count], trans_prob_mat: dict) -> None:
+    def __init__(self, states: List[Count], trans_prob_mat: dict, outcome_values) -> None:
         """Instantiates StochasticGame object
 
         Parameters
@@ -44,6 +44,7 @@ class StochasticGame:
         """
         self.states = states
         self.trans_prob_mat = trans_prob_mat
+        self.outcome_values = outcome_values
 
 
     def solve_game(self) -> None:
@@ -56,9 +57,9 @@ class StochasticGame:
             policy the optimal pitcher actions to minimize batter OBP
             (which determines state_val)
         """
-        state_vals, state_policy = self.run_val_iter()
-        self.print_solution(state_vals, state_policy)
-        return state_vals, state_policy
+        state_vals, state_policy, outcome_probabilities = self.run_val_iter()
+        #self.print_solution(state_vals, state_policy)
+        return state_vals, state_policy, outcome_probabilities
 
         # we want this to get the results and then print them too
 
@@ -92,9 +93,11 @@ class StochasticGame:
             x_optimal: dict, the optimal policy of a pitcher to minimize state_val
             One can think of state_val as the OBP of a batter at a given state
         """
-        solver = pywraplp.Solver(
+        """solver = pywraplp.Solver(
             "SolveSimpleSystem", pywraplp.Solver.GLOP_LINEAR_PROGRAMMING
         )
+        """
+        solver = pywraplp.Solver.CreateSolver("GLOP")
 
         # defining state value
         state_val = solver.NumVar(0, solver.infinity(), "state_val")
@@ -150,7 +153,9 @@ class StochasticGame:
                         zone
                     ].solution_value()
 
-        return state_val.solution_value(), optimal_policy
+        swing_take_probs = {BatActs.SWING.value: constraint1.dual_value(), BatActs.TAKE.value: constraint2.dual_value()}
+
+        return state_val.solution_value(), optimal_policy, swing_take_probs
 
     def run_val_iter(self, theta: float = 0.001):
         """Runs value iteration until we see state value changes less than theta
@@ -170,6 +175,8 @@ class StochasticGame:
         q_vals = {}
         policy = {}
         state_val = {}
+        swing_take_probs = {}
+        outcome_probabilities = {}
         for state in self.states:
             policy[state.state_name] = {}
             state_val[state.state_name] = [0]
@@ -180,36 +187,59 @@ class StochasticGame:
             all_states_done = True if iters > 0 else False
             for state in self.states:
                 count = state.state_name
-
+                outcome_probabilities[state.state_name] = {}
                 q_vals[state.state_name] = {}
+
                 for pitch in self.trans_prob_mat:
                     q_vals[state.state_name][pitch] = {}
+                    outcome_probabilities[state.state_name][pitch] = {}
                     for zone in self.trans_prob_mat[pitch]:
                         # we reset the q_vals everytime our state_vals change
                         q_vals[state.state_name][pitch][zone] = {
                             BatActs.SWING.value: 0,
                             BatActs.TAKE.value: 0,
                         }
+                        outcome_probabilities[state.state_name][pitch][zone] = {
+                            Outcomes.SINGLE.value: 0,
+                            Outcomes.DOUBLE.value: 0,
+                            Outcomes.TRIPLE.value: 0,
+                            Outcomes.HOMERUN.value: 0,
+                            Outcomes.OUT.value: 0
+                        }
 
                         # compute swing q_vals
                         for res, res_prob in self.trans_prob_mat[pitch][zone][count][
                             BatActs.SWING.value
                         ].items():
-
                             # given a state and outcome, what is the next state
                             nxt_state = state.get_successor(res)
-
-                            if nxt_state == Outcomes.HIT.value:
+                            """
+                            if nxt_state in [Outcomes.SINGLE.value,Outcomes.DOUBLE.value,Outcomes.TRIPLE.value,Outcomes.HOMERUN.value,Outcomes.OUT.value]:
+                                outcome_probabilities[state.state_name][pitch][zone][nxt_state] += res_prob
+                            """
+                            if nxt_state == Outcomes.SINGLE.value:
                                 q_vals[state.state_name][pitch][zone][
                                     BatActs.SWING.value
-                                ] += res_prob
-
+                                ] += res_prob * self.outcome_values[Outcomes.SINGLE.value]
+                            elif nxt_state == Outcomes.DOUBLE.value:
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.SWING.value
+                                ] += res_prob * self.outcome_values[Outcomes.DOUBLE.value]
+                            elif nxt_state == Outcomes.TRIPLE.value:
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.SWING.value
+                                ] += res_prob * self.outcome_values[Outcomes.TRIPLE.value]
+                            elif nxt_state == Outcomes.HOMERUN.value:
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.SWING.value
+                                ] += res_prob * self.outcome_values[Outcomes.HOMERUN.value]
                             elif nxt_state != Outcomes.OUT.value:
                                 # print(state_val[nxt_state][iters])
                                 # print(res_prob)
                                 q_vals[state.state_name][pitch][zone][
                                     BatActs.SWING.value
                                 ] += (res_prob * state_val[nxt_state][iters])
+
 
                         # compute take q_vals
                         for res, res_prob in self.trans_prob_mat[pitch][zone][count][
@@ -218,19 +248,33 @@ class StochasticGame:
 
                             # given a state and outcome, what is the next state
                             nxt_state = state.get_successor(res)
-
-                            if nxt_state == Outcomes.HIT.value:
+                            """
+                            if nxt_state in [Outcomes.SINGLE.value,Outcomes.DOUBLE.value,Outcomes.TRIPLE.value,Outcomes.HOMERUN.value,Outcomes.OUT.value]:
+                                outcome_probabilities[state.state_name][pitch][zone][nxt_state] += res_prob
+                            """
+                            if nxt_state == Outcomes.SINGLE.value:
                                 q_vals[state.state_name][pitch][zone][
                                     BatActs.TAKE.value
-                                ] += res_prob
-
+                                ] += res_prob * self.outcome_values["single"]
+                                outcome_probabilities[state.state_name][pitch][zone][nxt_state] += res_prob
+                            elif nxt_state == Outcomes.DOUBLE.value:
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.TAKE.value
+                                ] += res_prob * self.outcome_values["double"]
+                            elif nxt_state == Outcomes.TRIPLE.value:
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.TAKE.value
+                                ] += res_prob * self.outcome_values["triple"]
+                            elif nxt_state == Outcomes.HOMERUN.value:
+                                q_vals[state.state_name][pitch][zone][
+                                    BatActs.TAKE.value
+                                ] += res_prob * self.outcome_values["homerun"]
                             elif nxt_state != Outcomes.OUT.value:
                                 q_vals[state.state_name][pitch][zone][
                                     BatActs.TAKE.value
                                 ] += (res_prob * state_val[nxt_state][iters])
-
                 # passing q_vals into LP to get state_val and policy
-                new_state_val, policy[state.state_name] = self.solve_lp(
+                new_state_val, policy[state.state_name], swing_take_probs[state.state_name] = self.solve_lp(
                     q_vals[state.state_name]
                 )
                 state_val[state.state_name].append(new_state_val)
@@ -249,10 +293,55 @@ class StochasticGame:
             # if all state differences are < theta, then exit while loop
             if all_states_done:
                 break
-
+            
             iters += 1
+        outcome_probabilities = self.get_outcome_probs(policy, swing_take_probs)
+        return state_val, policy, outcome_probabilities
+    def get_outcome_probs(self, policy, swing_take_probs):
+        outcome_probabilities = {}
+        initial_state = self.states[0]
+        outcome_probabilities = self.get_state_outcome_prob(initial_state, policy, swing_take_probs, outcome_probabilities)
+        return outcome_probabilities
 
-        return state_val, policy
+    def get_state_outcome_prob(self, state, policy,swing_take_probs, outcome_probabilities):
+        count = state.state_name
+        if count in outcome_probabilities.keys():
+            return outcome_probabilities
+        else:
+            outcome_probabilities[count] = {
+                Outcomes.SINGLE.value: 0,
+                Outcomes.DOUBLE.value: 0,
+                Outcomes.TRIPLE.value: 0,
+                Outcomes.HOMERUN.value: 0,
+                Outcomes.OUT.value: 0
+            }
+            p_same_state = 0
+            for pitch, zones in policy[count].items():
+                for zone, p_action in zones.items():
+                    for b_action, b_prob in swing_take_probs[count].items():
+                        for res, res_prob in self.trans_prob_mat[pitch][zone][count][b_action].items():
+                            # given a state and outcome, what is the next state
+                            nxt_state = state.get_successor(res)
+                            if nxt_state in [Outcomes.SINGLE.value,Outcomes.DOUBLE.value,Outcomes.TRIPLE.value,Outcomes.HOMERUN.value,Outcomes.OUT.value]:
+                                outcome_probabilities[count][nxt_state] += res_prob*p_action*b_prob
+
+                            else:
+                                if nxt_state == count: #next state is same is the current, we use geometric sum
+                                    p_same_state += p_action*b_prob*res_prob
+                                else:
+                                    nxt_state_obj = Count(state.outcomes, int(nxt_state[0]), int(nxt_state[1]))
+                                    updated_outcomes = self.get_state_outcome_prob(nxt_state_obj,policy, swing_take_probs, outcome_probabilities)
+                                    for final_state, final_state_prob in updated_outcomes[nxt_state].items():
+                                        outcome_probabilities[count][final_state] += res_prob*p_action*b_prob*final_state_prob
+            if p_same_state>0:
+                #print(state.state_name)
+                #print(p_same_state)
+                #next state is same is the current, we use geometric sum
+                for outcome, p_outcome in outcome_probabilities[count].items():
+                    outcome_probabilities[count][outcome] += p_same_state*(p_outcome/(1-p_same_state))
+
+        return outcome_probabilities
+
 
     def print_solution(self, state_vals: List[dict], state_policy: dict) -> None:
         """Prints the state_value and optimal policy for each state

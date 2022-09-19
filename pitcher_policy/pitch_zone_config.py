@@ -3,7 +3,11 @@ from re import T
 from typing import List, Dict
 from pathlib import Path
 import numpy as np
+import json
 
+# import tensorflow as tf
+# from tensorflow import keras
+# import matplotlib.pyplot as plt
 from tensorflow.keras import models
 
 from pitches.zone import Zone
@@ -339,7 +343,7 @@ def gen_swing_trans_matrix(model, pitcher_tensor, batter_tensor, take_mat, pitch
     Returns
     _______
     dict
-        a transition matrix dict to index [pitch_type][pitch_zone][count] = [prob_strike,prob_foul,prob_out,prob_hit]
+        a transition matrix dict to index [pitch_type][pitch_zone][count] = [prob_strike,prob_foul,prob_out,prob_single,prob_double,prob_triple,prob_homerun]
     """
     batch_pitch_tensor = []
     batch_pitcher_tensor = []
@@ -434,8 +438,12 @@ def gen_swing_trans_matrix(model, pitcher_tensor, batter_tensor, take_mat, pitch
                         prediction = predictions[prediction_index]
                         prediction_index+=1
                         cleaned_prediction = {
+                            #['Strike', 'Foul', 'Out', 'Double', 'Single', 'Home Run', 'Triple']
                             Outcomes.OUT.value: float(prediction[2]),
-                            Outcomes.HIT.value: float(prediction[3]),
+                            Outcomes.SINGLE.value: float(prediction[4]),
+                            Outcomes.DOUBLE.value: float(prediction[3]),
+                            Outcomes.TRIPLE.value: float(prediction[6]),
+                            Outcomes.HOMERUN.value: float(prediction[5]),
                             Outcomes.FOUL.value: float(prediction[1]),
                             Outcomes.STRIKE.value: float(prediction[0]),
                         }
@@ -519,7 +527,7 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict, take_mat:dict) -> d
     Parameters
     ----------
     swing_trans_mat : dict
-        dict that defines the probability of an outcome (foul, swing, out, hit, ball)
+        dict that defines the probability of an outcome (foul, swing, out, single, double, triple, homerun, ball)
         access probs by swing_trans_mat[pitch][zone][outcome] = %outcome
     acc_mat : dict
         dict that defines the accuracy matrix dict[pitch][int_zone][act_zone] = %in_act
@@ -553,7 +561,10 @@ def gen_trans_prob_mat(swing_trans_mat: dict, acc_mat: dict, take_mat:dict) -> d
                     },
                     BatActs.SWING.value: {
                         Outcomes.OUT.value: 0,
-                        Outcomes.HIT.value: 0,
+                        Outcomes.SINGLE.value: 0,
+                        Outcomes.DOUBLE.value: 0,
+                        Outcomes.TRIPLE.value: 0,
+                        Outcomes.HOMERUN.value: 0,
                         Outcomes.FOUL.value: 0,
                         Outcomes.STRIKE.value: 0,
                         Outcomes.BALL.value: 0,
